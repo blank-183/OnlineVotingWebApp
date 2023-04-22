@@ -1,0 +1,150 @@
+﻿@model OnlineVotingWebApp.ViewModels.RegisterViewModel
+
+@{
+    Layout = "_Login_Layout";
+    ViewData["Title"] = "User Registration";
+}
+
+<section>
+    <div class="container w-75 container-login p-4">
+        <h3 class="mb-3">Create a Voter's Account</h3>
+        <form method="post">
+            <h5>Personal Information</h5>
+            <div class="row mb-4 g-3">
+                <div class="col-lg-4 col-md-6">
+                    <label class="form-label">First Name<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" asp-for="FirstName">
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <label class="form-label">Middle Name</label>
+                    <input type="text" class="form-control" asp-for="MiddleName">
+                    <span asp-validation-for="MiddleName" class="text-danger"></span>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <label class="form-label">Last Name<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" asp-for="LastName">
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <label class="form-label">Sex<span class="text-danger">*</span></label> <br />
+                    <select class="form-select" asp-for="Sex">
+                        <option class="dropdown-item" value=""></option>
+                        <option value="M">Male</option>
+                        <option value="F">Female</option>
+                    </select>
+                    <span asp-validation-for="Sex" class="text-danger"></span>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <label class="form-label">Civil Status<span class="text-danger">*</span></label>
+                    <select class="form-select" asp-for="CivilStatus">
+                        <option class="dropdown-item" value=""></option>
+                        <option value="Single">Single</option>
+                        <option value="Married">Married</option>
+                        <option value="Widowed">Widowed</option>
+                        <option value="Separated">Separated</option>
+                        <option value="Others">Others</option>
+                    </select>
+                    <span asp-validation-for="CivilStatus" class="text-danger"></span>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <label class="form-label">Date of Birth<span class="text-danger">*</span></label>
+                    <input type="date" class="form-control" asp-for="DateOfBirth">
+                    <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <label class="form-label">Phone Number<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" asp-for="PhoneNumber">
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+            </div>
+
+            <h5>Permanent Address</h5>
+            <div class="row mb-4 g-3">
+                <div class="col-lg-4 col-md-6">
+                    <label class="form-label">Region<span class="text-danger">*</span></label>
+                    <select class="form-select" asp-for="Region">
+                        <option class="dropdown-item" value=""></option>
+                        <option value="Region I">Region I</option>
+                        <option value="Region II">Region II</option>
+                        <option value="Region III">Region III</option>
+                        <option value="Region IV-A">Region IV-A</option>
+                        <option value="MIMAROPA">MIMAROPA</option>
+                        <option value="Region V">Region V</option>
+                        <option value="Region VI">Region VI</option>
+                        <option value="Region VII">Region VII</option>
+                        <option value="Region VIII">Region VIII</option>
+                        <option value="Region IX">Region IX</option>
+                        <option value="Region X">Region X</option>
+                        <option value="Region XI">Region XI</option>
+                        <option value="Region XII">Region XII</option>
+                        <option value="Region XIII">Region XIII</option>
+                        <option value="NCR">NCR</option>
+                        <option value="CAR">CAR</option>
+                        <option value="BARMM">BARMM</option>
+                    </select>
+                    <span asp-validation-for="Region" class="text-danger"></span>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <label class="form-label">Province<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" asp-for="Province">
+                    <span asp-validation-for="Province" class="text-danger"></span>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <label class="form-label">Municipality<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" asp-for="Municipality">
+                    <span asp-validation-for="Municipality" class="text-danger"></span>
+                </div>
+                <div class="col-lg-6 col-md-8">
+                    <label class="form-label">Address Line<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" asp-for="AddressLine">
+                    <span asp-validation-for="AddressLine" class="text-danger"></span>
+                </div>
+            </div>
+
+            <h5>Account Credentials</h5>
+            <div class="row mb-4 g-3">
+                <div class="col-lg-4 col-md-6">
+                    <label class="form-label">Email<span class="text-danger">*</span></label>
+                    <input type="email" class="form-control" asp-for="Email">
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <label class="form-label">Password<span class="text-danger">*</span></label>
+                    <input type="password" class="form-control" asp-for="Password">
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <label class="form-label">Confirm Password<span class="text-danger">*</span></label>
+                    <input type="password" class="form-control" asp-for="ConfirmPassword">
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                </div>
+            </div>
+
+            @*<div class="row mb-4 g-3">
+                <div class="col-md-6">
+                    <label class="custom-file-label form-label">Upload Profile Picture</label>
+                    <input type="file" asp-for="Photo" class="form-control custom-file-input">
+                </div>
+            </div>*@
+            <div class="mb-3">
+                <p>Already have an account? <a class="text-decoration-none" asp-controller="Account" asp-action="Index">Login here</a></p>
+            </div>
+            <button type="submit" class="btn btn-primary">Register</button>
+        </form>
+    </div>
+</section>
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+    <script>
+        //$(document).ready(function () {
+        //    $('.custom-file-input').on("change", function () {
+        //        var fileName = $(this).val().split("\\").pop();
+        //        $(this).next('.custom-file-label').html(fileName);
+        //    });
+        //});
+    </script>
+}

@@ -1,0 +1,39 @@
+﻿@model OnlineVotingWebApp.ViewModels.LoginViewModel
+
+@{
+    Layout = "_Login_Layout";
+    ViewData["Title"] = "User Login";
+}
+
+<section>
+    <div class="container w-75 container-login">
+        <div class="row d-md-flex align-items-center justify-content-between">
+            <div class="col-lg-8 bg-primary p-2">
+                <img class="img-fluid w-75 d-block m-auto" src="~/img/login.svg" alt="">
+            </div>
+            <div class="col-lg-4">
+                <form method="post" class="m-auto px-3 py-5">
+                    <h4 class="mb-3">Sign in to your account</h4>
+                    <div class="mb-3">
+                        <input type="email" class="form-control" asp-for="Email" placeholder="Enter email">
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" class="form-control" asp-for="Password" placeholder="Enter password">
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <p>Don't have an account? <a class="text-decoration-none" asp-controller="Account" asp-action="Register">Register here</a></p>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}
