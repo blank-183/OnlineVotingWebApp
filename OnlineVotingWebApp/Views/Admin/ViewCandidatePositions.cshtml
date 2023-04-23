@@ -1,5 +1,66 @@
-﻿@{
+﻿@model IEnumerable<CandidatePosition>
+
+@{
     ViewData["Title"] = "View Candidate Positions";
 }
 
-<h1>View Candidate Positions</h1>
+<div class="container bg-white p-4">
+
+    <div class="row mb-2">
+        <div class="col-6">
+            <h2 class="mb-3">CANDIDATE POSITIONS</h2>
+
+        </div>
+        <div class="col-6 text-end">
+            <a asp-controller="Admin" asp-action="AddCandidatePosition" class="btn btn-primary">
+                Add New Candidate Position
+            </a>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped table-hover" id="candidatePositionTable">
+            <thead>
+                <tr>
+                    <th>Candidate Position ID</th>
+                    <th>Candidate Position Name</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var candidatePosition in Model)
+                    {
+                        <tr>
+                            <td class="align-middle">@candidatePosition.CandidatePositionId</td>
+                            <td class="align-middle">@candidatePosition.CandidatePositionName</td>
+                            <td class="align-middle">
+                                <a class="btn btn-sm btn-primary" asp-controller="Admin" asp-action="UpdateCandidatePosition" asp-route-id="@candidatePosition.CandidatePositionId">
+                                    Update
+                                </a>
+                                <a class="btn btn-sm btn-danger" asp-controller="Admin" asp-action="DeleteCandidatePosition" asp-route-id="@candidatePosition.CandidatePositionId">
+                                    Delete
+                                </a>
+
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+    <script>
+        $(document).ready(function () {
+            $('#candidatePositionTable').DataTable();
+        });
+    </script>
+}

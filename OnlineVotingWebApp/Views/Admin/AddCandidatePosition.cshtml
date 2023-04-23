@@ -1,0 +1,28 @@
+﻿@model AddCandidatePositionViewModel
+
+@{
+    ViewData["Title"] = "Add New Candidate Position";
+}
+
+<div class="container w-75 container-login p-4">
+    <h3 class="mb-3">Add New Candidate Position</h3>
+    <form method="post">
+        <div class="row mb-4 g-3">
+            <div class="col">
+                <label class="form-label">Candidate Position Name<span class="text-danger">*</span></label>
+                <input type="text" class="form-control" asp-for="CandidatePositionName">
+                <span asp-validation-for="CandidatePositionName" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="mt-3 btn-group">
+            <button type="submit" class="btn btn-primary">Add Candidate Position</button>
+            <a asp-controller="Admin" asp-action="ViewCandidatePositions" class="btn btn-secondary">Back</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

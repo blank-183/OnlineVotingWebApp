@@ -4,21 +4,19 @@
     ViewData["Title"] = "Create New Role";
 }
 
-<section>
-    <div class="container w-50 container-login p-4">
-        <h3 class="mb-3">Add New Role</h3>
-        <form method="post">
-            <div class="row mb-4 g-3">
-                <div class="col">
-                    <label class="form-label">Role Name<span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" asp-for="RoleName">
-                    <span asp-validation-for="RoleName" class="text-danger"></span>
-                </div>
+<div class="container w-75 container-login p-4">
+    <h3 class="mb-3">Add New Role</h3>
+    <form method="post">
+        <div class="row mb-4 g-3">
+            <div class="col">
+                <label class="form-label">Role Name<span class="text-danger">*</span></label>
+                <input type="text" class="form-control" asp-for="RoleName">
+                <span asp-validation-for="RoleName" class="text-danger"></span>
             </div>
-            <button type="submit" class="btn btn-primary">Add Role</button>
-        </form>
-    </div>
-</section>
+        </div>
+        <button type="submit" class="btn btn-primary">Add Role</button>
+    </form>
+</div>
 
 @section Scripts {
     @{
