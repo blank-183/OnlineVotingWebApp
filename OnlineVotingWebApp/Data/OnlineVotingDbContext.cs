@@ -21,6 +21,8 @@ public partial class OnlineVotingDbContext : IdentityDbContext
     public virtual DbSet<Address> Addresses { get; set; }
     public virtual DbSet<ActivityLog> ActivityLogs { get; set; }
     public virtual DbSet<VoteEvent> VoteEvents { get; set; }
+    public virtual DbSet<CandidatePosition> CandidatePositions { get; set; }
+    public virtual DbSet<Candidate> Candidates { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -48,6 +50,21 @@ public partial class OnlineVotingDbContext : IdentityDbContext
             entity.HasOne(d => d.ApplicationUser)
             .WithMany(e => e.ActivityLogs)
             .HasForeignKey(e => e.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<CandidatePosition>(entity =>
+        {
+            entity.HasKey(e => e.CandidatePositionId).HasName("PK_CandidatePosition_CandidatePositionId");
+        });
+
+        modelBuilder.Entity<Candidate>(entity =>
+        {
+            entity.HasKey(e => e.CandidateId).HasName("PK__Candidate_CandidateId");
+
+            entity.HasOne(d => d.CandidatePosition)
+            .WithMany(e => e.Candidates)
+            .HasForeignKey(e => e.CandidatePositionId)
             .OnDelete(DeleteBehavior.Cascade);
         });
 

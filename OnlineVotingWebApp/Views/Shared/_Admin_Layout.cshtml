@@ -24,12 +24,11 @@
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                            <span class="visually-hidden">(current)</span>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" asp-controller="" asp-action="">Cadidates</a>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" asp-controller="Admin" asp-action="">Manage Candidate Positions</a>
+                                <a class="dropdown-item" asp-controller="Admin" asp-action="ViewCandidatePositions">Manage Candidate Positions</a>
                                 <a class="dropdown-item" asp-controller="Admin" asp-action="">Manage Candidates</a>
                             </div>
                         </li>
@@ -41,10 +40,10 @@
                             </div>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" asp-controller="" asp-action="">Voters</a>
+                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" asp-controller="" asp-action="">Administration</a>
                             <div class="dropdown-menu">
                                 <a class="dropdown-item" asp-controller="Admin" asp-action="">Manage Voters</a>
-                                <a class="dropdown-item" asp-controller="Admin" asp-action="">View Voter Logs</a>
+                                <a class="dropdown-item" asp-controller="Admin" asp-action="">View User Logs</a>
                             </div>
                         </li>
                     </ul>

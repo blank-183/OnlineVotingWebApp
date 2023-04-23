@@ -24,19 +24,15 @@
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                            <span class="visually-hidden">(current)</span>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Candidates</a>
-                            <span class="visually-hidden">(current)</span>
+                            <a class="nav-link" asp-area="" asp-controller="Voter" asp-action="ViewCandidates">Candidates</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Vote</a>
-                            <span class="visually-hidden">(current)</span>
+                            <a class="nav-link" asp-area="" asp-controller="Voter" asp-action="Vote">Vote</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Tutorial</a>
-                            <span class="visually-hidden">(current)</span>
+                            <a class="nav-link" asp-area="" asp-controller="Voter" asp-action="Tutorial">Tutorial</a>
                         </li>
                     </ul>
                     <ul class="navbar-nav ml-auto">
@@ -47,7 +43,7 @@
                                     <strong>VOTER @User.Identity.Name</strong>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" asp-controller="Admin" asp-action="">View Profile</a>
+                                    <a class="dropdown-item" asp-controller="Homes" asp-action="">View Profile</a>
                                     <div class="dropdown-divider"></div>
                                     <form method="post" asp-controller="Account" asp-action="Logout">
                                         <button type="submit" class="nav-link btn btn-link text-danger">
