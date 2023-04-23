@@ -38,10 +38,22 @@ namespace OnlineVotingWebApp.Controllers
         {
             if (ModelState.IsValid)
             {
+                string actionDesc = "Login";
                 var result = await signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
 
                 if (result.Succeeded)
                 {
+                    var user = await userManager.FindByEmailAsync(model.Email);
+
+                    var log = new ActivityLog()
+                    {
+                        UserId = user.Id,
+                        Description = actionDesc,
+                    };
+
+                    await this._context.ActivityLogs.AddAsync(log);
+                    await this._context.SaveChangesAsync();
+
                     return RedirectToAction("Index", "Home");
                 }
 
@@ -63,6 +75,7 @@ namespace OnlineVotingWebApp.Controllers
             if (ModelState.IsValid)
             {
                 string? uniqueFileName = null;
+                string actionDesc = "User created";
 
                 if (model.Photo != null)
                 {
@@ -92,21 +105,26 @@ namespace OnlineVotingWebApp.Controllers
                     AddressLine = model.AddressLine,
                 };
 
+                var log = new ActivityLog()
+                {
+                    UserId = user.Id,
+                    Description = actionDesc
+                };
+
                 var result = await userManager.CreateAsync(user, model.Password);
                 
                 if (result.Succeeded)
                 {
+
                     await this._context.Addresses.AddAsync(address);
+                    await this._context.ActivityLogs.AddAsync(log);
                     await this._context.SaveChangesAsync();
                     await userManager.AddToRoleAsync(user, "Voter");
                 
                     TempData["SuccessMessage"] = "Your registration was successful! You may now sign in.";
                     return RedirectToAction("Login", "Account");
                 }
-
-
             }
-
             return View(model);
         }
 
@@ -115,8 +133,36 @@ namespace OnlineVotingWebApp.Controllers
         public async Task<IActionResult> Logout()
         {
             await signInManager.SignOutAsync();
+
+            string actionDesc = "Logout";
+            var userId = userManager.GetUserId(User);
+
+            var log = new ActivityLog()
+            {
+                UserId = userId,
+                Description = actionDesc,
+            };
+
+            await this._context.ActivityLogs.AddAsync(log);
+            await this._context.SaveChangesAsync();
+
             TempData["SuccessMessage"] = "User successfully logged out.";
             return RedirectToAction("Login", "Account");
+        }
+
+        [AcceptVerbs("Get", "Post")]
+        public async Task<IActionResult> IsEmailInUse(string email)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                return Json(true);
+            }
+            else
+            {
+                return Json($"Email is already in use");
+            }
         }
 
         private string ProcessUploadedFile(IFormFile photo)

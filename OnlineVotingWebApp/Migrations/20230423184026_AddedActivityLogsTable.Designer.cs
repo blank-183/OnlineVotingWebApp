@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineVotingWebApp.Data;
 
@@ -11,9 +12,11 @@ using OnlineVotingWebApp.Data;
 namespace OnlineVotingWebApp.Migrations
 {
     [DbContext(typeof(OnlineVotingDbContext))]
-    partial class OnlineVotingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230423184026_AddedActivityLogsTable")]
+    partial class AddedActivityLogsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
