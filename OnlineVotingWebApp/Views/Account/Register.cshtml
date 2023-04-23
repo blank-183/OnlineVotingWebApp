@@ -1,4 +1,4 @@
-﻿@model OnlineVotingWebApp.ViewModels.RegisterViewModel
+﻿@model RegisterViewModel
 
 @{
     Layout = "_Login_Layout";
@@ -8,7 +8,7 @@
 <section>
     <div class="container w-75 container-login p-4">
         <h3 class="mb-3">Create a Voter's Account</h3>
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             <h5>Personal Information</h5>
             <div class="row mb-4 g-3">
                 <div class="col-lg-4 col-md-6">
@@ -121,16 +121,20 @@
                 </div>
             </div>
 
-            @*<div class="row mb-4 g-3">
+            <div class="row mb-4 g-3">
                 <div class="col-md-6">
                     <label class="custom-file-label form-label">Upload Profile Picture</label>
                     <input type="file" asp-for="Photo" class="form-control custom-file-input">
                 </div>
-            </div>*@
-            <div class="mb-3">
-                <p>Already have an account? <a class="text-decoration-none" asp-controller="Account" asp-action="Index">Login here</a></p>
             </div>
+@*            <div class="mb-3">
+                <p>Already have an account? <a class="text-decoration-none" asp-controller="Account" asp-action="Login">Login here</a></p>
+            </div>*@
+
+            <div class="btn-group">
             <button type="submit" class="btn btn-primary">Register</button>
+                <a class="btn btn-secondary" asp-controller="Account" asp-action="Login">Go to login</a>
+            </div>
         </form>
     </div>
 </section>
@@ -140,11 +144,11 @@
         <partial name="_ValidationScriptsPartial" />
     }
     <script>
-        //$(document).ready(function () {
-        //    $('.custom-file-input').on("change", function () {
-        //        var fileName = $(this).val().split("\\").pop();
-        //        $(this).next('.custom-file-label').html(fileName);
-        //    });
-        //});
+        $(document).ready(function () {
+            $('.custom-file-input').on("change", function () {
+                var fileName = $(this).val().split("\\").pop();
+                $(this).next('.custom-file-label').html(fileName);
+            });
+        });
     </script>
 }

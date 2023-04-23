@@ -65,6 +65,6 @@ namespace OnlineVotingWebApp.ViewModels
         [Compare("Password", ErrorMessage = "Password and Confirmation Password do not match.")]
         public string ConfirmPassword { get; set; }
 
-        //public IFormFile? Photo { get; set; }
+        public IFormFile? Photo { get; set; }
     }
 }

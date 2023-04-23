@@ -26,17 +26,26 @@
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                             <span class="visually-hidden">(current)</span>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Candidates</a>
-                            <span class="visually-hidden">(current)</span>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" asp-controller="" asp-action="">Cadidates</a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" asp-controller="Admin" asp-action="">Manage Candidate Positions</a>
+                                <a class="dropdown-item" asp-controller="Admin" asp-action="">Manage Candidates</a>
+                            </div>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Vote</a>
-                            <span class="visually-hidden">(current)</span>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" asp-controller="" asp-action="">Election Event</a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" asp-controller="Admin" asp-action="">Create Event</a>
+                                <a class="dropdown-item" asp-controller="Admin" asp-action="">Reset Event</a>
+                            </div>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Tutorial</a>
-                            <span class="visually-hidden">(current)</span>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" asp-controller="" asp-action="">Voters</a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" asp-controller="Admin" asp-action="">Manage Voters</a>
+                                <a class="dropdown-item" asp-controller="Admin" asp-action="">View Voter Logs</a>
+                            </div>
                         </li>
                     </ul>
                     <ul class="navbar-nav ml-auto">
@@ -44,7 +53,7 @@
                         {
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" asp-controller="" asp-action="">
-                                    <strong>VOTER @User.Identity.Name</strong>
+                                    <strong>ADMIN @User.Identity.Name</strong>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item" asp-controller="Admin" asp-action="">View Profile</a>
@@ -90,6 +99,18 @@
             crossorigin="anonymous"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.nav-link').forEach(link => {
+                if (link.getAttribute('href').toLowerCase() === location.pathname.toLowerCase()) {
+                    link.classList.add('active-link');
+                } else {
+                    link.classList.remove('active-link');
+                }
+            });
+        })
+    </script>
 </body>
 </html>
 

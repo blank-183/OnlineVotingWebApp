@@ -13,11 +13,13 @@ builder.Services.AddDbContext<OnlineVotingDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("OvsConnection"));
 });
 
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
-{
-    options.Password.RequiredLength = 15;
-    options.Password.RequiredUniqueChars = 5;
-}).AddEntityFrameworkStores<OnlineVotingDbContext>();
+//builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+//{
+//    options.Password.RequiredLength = 15;
+//    options.Password.RequiredUniqueChars = 5;
+//}).AddEntityFrameworkStores<OnlineVotingDbContext>();
+
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<OnlineVotingDbContext>();
 
 var app = builder.Build();
 
@@ -40,6 +42,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Account}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
