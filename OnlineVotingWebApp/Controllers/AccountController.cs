@@ -45,21 +45,22 @@ namespace OnlineVotingWebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                string actionDesc = "Login";
+                //string actionDesc = "Login";
                 var result = await signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
 
                 if (result.Succeeded)
                 {
-                    var user = await userManager.FindByEmailAsync(model.Email);
+                    //var user = await userManager.FindByEmailAsync(model.Email);
 
-                    var log = new ActivityLog()
-                    {
-                        UserId = user.Id,
-                        Description = actionDesc,
-                    };
+                    //var log = new ActivityLog()
+                    //{
+                    //    UserId = user.Id,
+                    //    Description = actionDesc,
+                    //};
 
-                    await this._context.ActivityLogs.AddAsync(log);
-                    await this._context.SaveChangesAsync();
+                    //await this._context.ActivityLogs.AddAsync(log);
+                    //await this._context.SaveChangesAsync();
+                    AddToActivityLogs($"Login");
 
                     return RedirectToAction("Index", "Home");
                 }
@@ -147,17 +148,7 @@ namespace OnlineVotingWebApp.Controllers
         {
             await signInManager.SignOutAsync();
 
-            string actionDesc = "Logout";
-            var userId = userManager.GetUserId(User);
-
-            var log = new ActivityLog()
-            {
-                UserId = userId,
-                Description = actionDesc,
-            };
-
-            await this._context.ActivityLogs.AddAsync(log);
-            await this._context.SaveChangesAsync();
+            AddToActivityLogs($"Logout");
 
             TempData["SuccessMessage"] = "User successfully logged out.";
             return RedirectToAction("Login", "Account");
@@ -176,6 +167,20 @@ namespace OnlineVotingWebApp.Controllers
             {
                 return Json($"Email is already in use");
             }
+        }
+
+        private void AddToActivityLogs(string actionDesc)
+        {
+            var userId = userManager.GetUserId(User);
+
+            var log = new ActivityLog()
+            {
+                UserId = userId,
+                Description = actionDesc,
+            };
+
+            this._context.ActivityLogs.Add(log);
+            this._context.SaveChanges();
         }
 
         private string ProcessUploadedFile(IFormFile photo)

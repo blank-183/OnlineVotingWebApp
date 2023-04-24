@@ -134,6 +134,60 @@ namespace OnlineVotingWebApp.Controllers
         }
 
         [HttpGet]
+        public IActionResult DeleteCandidatePosition(int? id)
+        {
+            try
+            {
+                var candidatePosition = this._context.CandidatePositions.Find(id);
+
+                if (candidatePosition == null)
+                {
+                    return NotFound();
+                }
+
+                var model = new UpdateCandidatePositionViewModel()
+                {
+                    CandidatePositionId = candidatePosition.CandidatePositionId,
+                    CandidatePositionName = candidatePosition.CandidatePositionName
+                };
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message.ToString();
+                return RedirectToAction("Index");
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteCandidatePosition(UpdateCandidatePositionViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var candidatePosition = this._context.CandidatePositions.Find(model.CandidatePositionId);
+
+                if (candidatePosition == null)
+                {
+                    return NotFound();
+                }
+
+                var tempPosition = candidatePosition.CandidatePositionName;
+
+                this._context.CandidatePositions.Remove(candidatePosition);
+                await this._context.SaveChangesAsync();
+
+                AddToActivityLogs($"Deleted candidate position '{tempPosition}'");
+
+                TempData["SuccessMessage"] = "Candidate position deleted successfully!";
+                return RedirectToAction("ViewCandidatePositions");
+            }
+
+            return View(model);
+        }
+
+        [HttpGet]
         public IActionResult ViewUserLogs()
         {
             try
