@@ -1,0 +1,54 @@
+﻿@model UpdateCandidateViewModel
+
+@{
+    ViewData["Title"] = "Delete Candidate";
+}
+
+<section>
+    <div class="container w-75 container-login p-4">
+        <h3 class="mb-3">Delete Candidate</h3>
+        <form method="post" enctype="multipart/form-data">
+            <div class="row mb-4 g-3">
+                <div class="col-12">
+                    <label class="form-label">Candidate ID</label>
+                    <input type="text" class="form-control" asp-for="CandidateId" readonly>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <label class="form-label">First Name</label>
+                    <input type="text" class="form-control" asp-for="FirstName" readonly>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <label class="form-label">Middle Name</label>
+                    <input type="text" class="form-control" asp-for="MiddleName" readonly>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <label class="form-label">Last Name</label>
+                    <input type="text" class="form-control" asp-for="LastName" readonly>
+                </div>
+                <div class="col-lg-8">
+                    <label class="form-label">Party</label>
+                    <input type="text" class="form-control" asp-for="Party" readonly>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button type="submit" class="btn btn-danger">Delete</button>
+                <a class="btn btn-secondary" asp-controller="Admin" asp-action="ViewCandidates">Back</a>
+            </div>
+        </form>
+    </div>
+</section>
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+    <script>
+        $(document).ready(function () {
+            $('.custom-file-input').on("change", function () {
+                var fileName = $(this).val().split("\\").pop();
+                $(this).next('.custom-file-label').html(fileName);
+            });
+        });
+    </script>
+}

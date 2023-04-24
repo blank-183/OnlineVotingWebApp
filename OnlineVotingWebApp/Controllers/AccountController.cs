@@ -12,17 +12,15 @@ namespace OnlineVotingWebApp.Controllers
     {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly SignInManager<ApplicationUser> signInManager;
-        private readonly RoleManager<IdentityRole> roleManager;
         private readonly OnlineVotingDbContext _context;
         private readonly IWebHostEnvironment webHostEnvironment;
 
         public AccountController(UserManager<ApplicationUser> userManager, 
-            SignInManager<ApplicationUser> signInManager, RoleManager<IdentityRole> roleManager, OnlineVotingDbContext db,
+            SignInManager<ApplicationUser> signInManager, OnlineVotingDbContext db,
             IWebHostEnvironment webHostEnvironment)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
-            this.roleManager = roleManager;
             this._context = db;
             this.webHostEnvironment = webHostEnvironment;
         }
@@ -30,7 +28,7 @@ namespace OnlineVotingWebApp.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            if (this.User.Identity.IsAuthenticated)
+            if (this.User.Identity != null && this.User.Identity.IsAuthenticated)
             {
                 TempData["ErrorMessage"] = "You are already logged in!";
                 return RedirectToAction("Index", "Home");
@@ -45,22 +43,21 @@ namespace OnlineVotingWebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                //string actionDesc = "Login";
+                string actionDesc = "Login";
                 var result = await signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
 
                 if (result.Succeeded)
                 {
-                    //var user = await userManager.FindByEmailAsync(model.Email);
+                    var user = await userManager.FindByEmailAsync(model.Email);
 
-                    //var log = new ActivityLog()
-                    //{
-                    //    UserId = user.Id,
-                    //    Description = actionDesc,
-                    //};
+                    var log = new ActivityLog()
+                    {
+                        UserId = user.Id,
+                        Description = actionDesc,
+                    };
 
-                    //await this._context.ActivityLogs.AddAsync(log);
-                    //await this._context.SaveChangesAsync();
-                    AddToActivityLogs($"Login");
+                    await this._context.ActivityLogs.AddAsync(log);
+                    await this._context.SaveChangesAsync();
 
                     return RedirectToAction("Index", "Home");
                 }
@@ -73,7 +70,7 @@ namespace OnlineVotingWebApp.Controllers
         [HttpGet]
         public IActionResult Register()
         {
-            if (this.User.Identity.IsAuthenticated)
+            if (this.User.Identity != null && this.User.Identity.IsAuthenticated)
             {
                 TempData["ErrorMessage"] = "You are already logged in!";
                 return RedirectToAction("Index", "Home");

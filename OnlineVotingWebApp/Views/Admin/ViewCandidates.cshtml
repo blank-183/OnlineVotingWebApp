@@ -1,0 +1,73 @@
+﻿@model IEnumerable<ViewCandidatesViewModel>
+
+@{
+    ViewData["Title"] = "View Candidates";
+}
+
+<div class="container bg-white p-4">
+
+    <div class="row mb-2">
+        <div class="col-6">
+            <h2 class="mb-3">LIST OF CANDIDATES</h2>
+        </div>
+        <div class="col-6 text-end">
+            <a asp-controller="Admin" asp-action="AddCandidate" class="btn btn-dark">
+                Add New Candidate
+            </a>
+        </div>
+        <hr />
+        
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped table-hover" id="candidatePositionTable">
+            <thead>
+                <tr>
+                    <th>Candidate ID</th>
+                    <th>Candidate Name</th>
+                    <th>Candidate Position</th>
+                    <th>Party</th>
+                    <th>Photo Path</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var candidate in Model)
+                    {
+                        <tr>
+                            <td class="align-middle" style="width: 10%;">@candidate.CandidateId</td>
+                            <td class="align-middle">@candidate.FullName</td>
+                            <td class="align-middle">@candidate.CandidatePositionName</td>
+                            <td class="align-middle">@candidate.Party</td>
+                            <td class="align-middle">@candidate.Photo</td>
+                            <td class="align-middle" style="width: 15%;">
+                                <a class="btn btn-sm btn-primary" asp-controller="Admin" asp-action="UpdateCandidate" asp-route-id="@candidate.CandidateId">
+                                    Update
+                                </a>
+                                <a class="btn btn-sm btn-danger" asp-controller="Admin" asp-action="DeleteCandidate" asp-route-id="@candidate.CandidateId">
+                                    Delete
+                                </a>
+
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+    <script>
+        $(document).ready(function () {
+            $('#candidatePositionTable').DataTable();
+        });
+    </script>
+}

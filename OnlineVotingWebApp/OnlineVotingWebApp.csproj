@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="wwwroot\img\candidate\" />
     <Folder Include="wwwroot\img\user\" />
   </ItemGroup>
 

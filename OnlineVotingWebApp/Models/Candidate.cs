@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace OnlineVotingWebApp.Models
 {
@@ -30,6 +31,20 @@ namespace OnlineVotingWebApp.Models
         [Unicode(false)]
         public string? Photo { get; set; }
 
-        public CandidatePosition CandidatePosition { get; set; }
+        public CandidatePosition? CandidatePosition { get; set; }
+
+        [NotMapped]
+        public string FullName
+        {
+            get
+            {
+                if (MiddleName != null)
+                {
+                    return $"{FirstName} {MiddleName} {LastName}";
+                }
+
+                return FirstName + " " + LastName;
+            }
+        }
     }
 }
