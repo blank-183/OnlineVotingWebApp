@@ -1,0 +1,55 @@
+﻿@model IEnumerable<ActivityLog>
+
+@{
+    ViewData["Title"] = "View Candidate Positions";
+}
+
+<div class="container bg-white p-4">
+
+    <div class="row mb-2">
+        <div class="col-6">
+            <h2 class="mb-3">USER LOGS</h2>
+        </div>
+        <hr />
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped table-hover" id="candidatePositionTable">
+            <thead>
+                <tr>
+                    <td>Activity Log ID</td>
+                    <td>User ID</td>
+                    <td>Description</td>
+                    <td>Activity Date Time</td>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var activityLog in Model)
+                    {
+                        <tr>
+                            <td class="align-middle">@activityLog.ActivityLogId</td>
+                            <td class="align-middle">@activityLog.UserId</td>
+                            <td class="align-middle">@activityLog.Description</td>
+                            <td class="align-middle">@activityLog.ActivityDateTime</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+    <script>
+        $(document).ready(function () {
+            $('#candidatePositionTable').DataTable();
+        });
+    </script>
+}

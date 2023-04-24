@@ -30,10 +30,17 @@ namespace OnlineVotingWebApp.Controllers
         [HttpGet]
         public IActionResult Login()
         {
+            if (this.User.Identity.IsAuthenticated)
+            {
+                TempData["ErrorMessage"] = "You are already logged in!";
+                return RedirectToAction("Index", "Home");
+            }
+
             return View();
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (ModelState.IsValid)
@@ -65,6 +72,12 @@ namespace OnlineVotingWebApp.Controllers
         [HttpGet]
         public IActionResult Register()
         {
+            if (this.User.Identity.IsAuthenticated)
+            {
+                TempData["ErrorMessage"] = "You are already logged in!";
+                return RedirectToAction("Index", "Home");
+            }
+
             return View();
         }
 

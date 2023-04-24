@@ -1,4 +1,9 @@
 ﻿@inject SignInManager<ApplicationUser> signInManager;
+@inject UserManager<ApplicationUser> userManager;
+
+@{
+    var user = await userManager.GetUserAsync(User);
+}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -41,7 +46,7 @@
                         {
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" asp-controller="" asp-action="">
-                                    <strong>VOTER @User.Identity.Name</strong>
+                                    <strong>VOTER @($"{user.FirstName} {user.LastName}")</strong>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item" asp-controller="Homes" asp-action="">View Profile</a>
