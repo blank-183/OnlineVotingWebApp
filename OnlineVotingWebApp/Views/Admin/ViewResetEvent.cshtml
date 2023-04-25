@@ -1,0 +1,46 @@
+﻿@model VoteEvent
+
+@{
+    ViewData["Title"] = "Reset Event";
+}
+
+<div class="container w-50 container-login p-4" style="min-width: 400px;">
+    <div class="col-6">
+        <h2 class="mb-3"><strong>RESET ELECTION</strong></h2>
+    </div>
+    <hr />
+
+    <div class="row mb-5 g-3">
+        <div class="col-12">
+            <label class="form-label">Vote Event ID</label>
+            <input type="text" class="form-control" asp-for="VoteEventId" readonly>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Start Date Time</label>
+            <input type="datetime-local" class="form-control" asp-for="StartDateTime" readonly>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">End Date Time</label>
+            <input type="datetime-local" class="form-control" asp-for="EndDateTime" readonly>
+        </div>
+    </div>
+    <p class="text-danger">*You cannot undo this action.</p>
+    <p class="text-danger">*Resetting event will truncate the <strong>candidate positions</strong>, <strong>candidates</strong>, <strong>vote event</strong>, and <strong>user logs</strong> table.</p>
+    <form method="post" asp-controller="Admin" asp-action="ResetEvent">
+        <div class="mt-3 btn-group">
+            <button type="submit" class="btn btn-danger">Reset</button>
+            <a asp-controller="Admin" asp-action="ViewEvent" class="btn btn-secondary">Go to event</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+    <script>
+        $(document).ready(function () {
+            $('#candidatePositionTable').DataTable();
+        });
+    </script>
+}
