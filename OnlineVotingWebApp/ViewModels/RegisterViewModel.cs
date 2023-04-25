@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
+using OnlineVotingWebApp.Validations;
+using static OnlineVotingWebApp.Controllers.AccountController;
 
 namespace OnlineVotingWebApp.ViewModels
 {
@@ -30,11 +32,13 @@ namespace OnlineVotingWebApp.ViewModels
 
         [Display(Name = "Date of Birth")]
         [Required]
+        [AgeValidation(ErrorMessage = "You must be at least 18 years old.")]
         public DateTime DateOfBirth { get; set; }
 
         [Display(Name = "Phone Number")]
         [Required]
         [RegularExpression(@"^(\+639)\d{9}$", ErrorMessage = "Phone number should be in the format +639xxxxxxxxx")]
+        [Remote(action: "IsPhoneNumberInUse", controller: "Account")]
         public string PhoneNumber { get; set; }
 
         [Required]

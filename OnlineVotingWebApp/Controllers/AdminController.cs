@@ -28,280 +28,6 @@ namespace OnlineVotingWebApp.Controllers
             this.webHostEnvironment = webHostEnvironment;
         }
 
-
-        [HttpGet]
-        public async Task<IActionResult> ManageVoters()
-        {
-            var voters = await userManager.GetUsersInRoleAsync("Voter");
-
-            return View(voters);
-        }
-
-        [HttpGet]
-        public IActionResult ViewEvent()
-        {
-            try
-            {
-                VoteEvent? voteEvent = this._context.VoteEvents.FirstOrDefault();
-                return View(voteEvent);
-            }
-            catch (Exception ex)
-            {
-                TempData["ErrorMessage"] = ex.Message.ToString();
-                return RedirectToAction("Index", "Home");
-            }
-        }
-
-        [HttpGet]
-        public IActionResult ViewResetEvent()
-        {
-            if (this._context.VoteEvents.Count() < 1)
-            {
-                TempData["ErrorMessage"] = "There is currently no scheduled event. Schedule an event first.";
-                return RedirectToAction("ViewEvent");
-            }
-
-            try
-            {
-                VoteEvent? voteEvent = this._context.VoteEvents.FirstOrDefault();
-                return View(voteEvent);
-            }
-            catch (Exception ex)
-            {
-                TempData["ErrorMessage"] = ex.Message.ToString();
-                return RedirectToAction("Index", "Home");
-            }
-        }
-
-        [HttpPost]
-        public IActionResult ResetEvent()
-        {
-            VoteEvent? voteEvent = this._context.VoteEvents.FirstOrDefault();
-
-            int resultStart = DateTime.Compare(DateTime.Now, voteEvent.StartDateTime);
-            int resultEnd = DateTime.Compare(DateTime.Now, voteEvent.EndDateTime);
-
-            if (resultStart < 0)
-            {
-                TempData["ErrorMessage"] = "The event has not yet started. You cannot reset this event.";
-                return RedirectToAction("ViewResetEvent");
-            }
-
-            if ((resultStart > 0) && (resultEnd < 0))
-            {
-                TempData["ErrorMessage"] = "The event is still ongoing. You cannot reset this event.";
-                return RedirectToAction("ViewResetEvent");
-            }
-
-            TruncateTables();
-            AddToActivityLogs("Election reset");
-
-            TempData["SuccessMessage"] = "Election has been successfully reset.";
-            return RedirectToAction("ViewEvent");
-        }
-
-        [HttpGet]
-        public IActionResult CreateEvent()
-        {
-            if (this._context.CandidatePositions.Count() < 1)
-            {
-                TempData["ErrorMessage"] = "Please add candidate positions first!";
-                return RedirectToAction("ViewEvent");
-            }
-
-            if (this._context.Candidates.Count() < 1)
-            {
-                TempData["ErrorMessage"] = "Please add candidates first!";
-                return RedirectToAction("ViewEvent");
-            }
-
-            if (this._context.VoteEvents.Count() > 0)
-            {
-                TempData["ErrorMessage"] = "A vote event is already scheduled.";
-                return RedirectToAction("ViewEvent");
-            }
-
-            var candidates = this._context.Candidates.ToList();
-
-            foreach (var pos in this._context.CandidatePositions)
-            {
-                int count = candidates.Count(e => e.CandidatePositionId == pos.CandidatePositionId);
-                if (count < 2)
-                {
-                    TempData["ErrorMessage"] = "There should be at least two candidates each position to create an event.";
-                    return RedirectToAction("ViewEvent");
-                }
-            }
-
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CreateEvent(CreateEventViewModel model)
-        {
-            int resultStart = DateTime.Compare(DateTime.Now, model.StartDateTime);
-            int result = DateTime.Compare(model.StartDateTime, model.EndDateTime);
-
-            if (resultStart >= 0)
-            {
-                TempData["ErrorMessage"] = "The start date time has already passed. Please choose a valid date and time.";
-                return View(model);
-            }
-
-            if (result > 0)
-            {
-                TempData["ErrorMessage"] = "The start date time should be before the end date time.";
-                return View(model);
-            }
-
-            if (ModelState.IsValid)
-            {
-                VoteEvent voteEvent = new VoteEvent()
-                {
-                    StartDateTime = model.StartDateTime,
-                    EndDateTime = model.EndDateTime
-                };
-
-                await this._context.VoteEvents.AddAsync(voteEvent);
-                await this._context.SaveChangesAsync();
-
-                AddToActivityLogs($"Added new event");
-
-                TempData["SuccessMessage"] = "Vote event created successfully!";
-                return RedirectToAction("ViewEvent");
-            }
-
-            TempData["ErrorMessage"] = "Model state not valid!";
-            return View(model);
-        }
-
-        [HttpGet]
-        public IActionResult UpdateEvent(int? id)
-        {
-            try
-            {
-                var voteEvent = this._context.VoteEvents.Find(id);
-
-                if (voteEvent == null)
-                {
-                    return NotFound();
-                }
-
-                var model = new UpdateEventViewModel()
-                {
-                    VoteEventId = voteEvent.VoteEventId,
-                    StartDateTime = voteEvent.StartDateTime,
-                    EndDateTime = voteEvent.EndDateTime
-                };
-
-                return View(model);
-            }
-            catch (Exception ex)
-            {
-                TempData["ErrorMessage"] = ex.Message.ToString();
-                return RedirectToAction("Index");
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> UpdateEvent(UpdateEventViewModel model)
-        {
-            int resultStart = DateTime.Compare(DateTime.Now, model.StartDateTime);
-            int resultEnd = DateTime.Compare(DateTime.Now, model.EndDateTime);
-            int result = DateTime.Compare(model.StartDateTime, model.EndDateTime);
-
-            if (resultStart >= 0)
-            {
-                TempData["ErrorMessage"] = "The start date time has already passed. Please choose a valid date and time.";
-                return View(model);
-            }
-
-            if (resultEnd >= 0)
-            {
-                TempData["ErrorMessage"] = "The end date time has already passed. Please choose a valid date and time.";
-                return View(model);
-            }
-
-            if (result > 0)
-            {
-                TempData["ErrorMessage"] = "The start date time should be before the end date time.";
-                return View(model);
-            }
-
-            if (ModelState.IsValid)
-            {
-                var voteEvent = this._context.VoteEvents.Find(model.VoteEventId);
-
-                if (voteEvent == null)
-                {
-                    return NotFound();
-                }
-
-                voteEvent.StartDateTime = model.StartDateTime;
-                voteEvent.EndDateTime = model.EndDateTime;
-
-                await this._context.SaveChangesAsync();
-
-                AddToActivityLogs("Updated current event");
-                TempData["SuccessMessage"] = "Current event successfully updated!";
-                return RedirectToAction("ViewEvent");
-            }
-
-            return View(model);
-        }
-
-        [HttpGet]
-        public IActionResult DeleteEvent(int? id)
-        {
-            try
-            {
-                var voteEvent = this._context.VoteEvents.Find(id);
-
-                if (voteEvent == null)
-                {
-                    return NotFound();
-                }
-
-                var model = new UpdateEventViewModel()
-                {
-                    VoteEventId = voteEvent.VoteEventId,
-                    StartDateTime = voteEvent.StartDateTime,
-                    EndDateTime = voteEvent.EndDateTime
-                };
-
-                return View(model);
-            }
-            catch (Exception ex)
-            {
-                TempData["ErrorMessage"] = ex.Message.ToString();
-                return RedirectToAction("ViewEvent");
-            }
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteEvent(UpdateEventViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var voteEvent = this._context.VoteEvents.Find(model.VoteEventId);
-
-                if (voteEvent == null)
-                {
-                    return NotFound();
-                }
-
-                this._context.VoteEvents.Remove(voteEvent);
-                await this._context.SaveChangesAsync();
-
-                AddToActivityLogs("Deleted event");
-                TempData["SuccessMessage"] = "Deleted event successfully!";
-                return RedirectToAction("ViewEvent");
-            }
-
-            return View(model);
-        }
-
         [HttpGet]
         public IActionResult ViewCandidatePositions()
         {
@@ -521,7 +247,7 @@ namespace OnlineVotingWebApp.Controllers
 
                 if (model.Photo != null)
                 {
-                    uniqueFileName = ProcessUploadedFile(model.Photo);
+                    uniqueFileName = ProcessUploadedPhoto(model.Photo);
                 }
 
                 var candidate = new Candidate()
@@ -594,7 +320,7 @@ namespace OnlineVotingWebApp.Controllers
 
                 if (model.Photo != null)
                 {
-                    uniqueFileName = ProcessUploadedFile(model.Photo);
+                    uniqueFileName = ProcessUploadedPhoto(model.Photo);
                     tempPhoto = candidate.Photo;
                 }
 
@@ -607,7 +333,7 @@ namespace OnlineVotingWebApp.Controllers
                     candidate.Party = model.Party;
                     candidate.Photo = uniqueFileName;
 
-                    DeletePhoto(tempPhoto);
+                    DeletePhoto(tempPhoto, "candidate");
                 }
                 else
                 {
@@ -682,12 +408,346 @@ namespace OnlineVotingWebApp.Controllers
 
                 if (tempPhoto != null)
                 {
-                    DeletePhoto(tempPhoto);
+                    DeletePhoto(tempPhoto, "candidate");
                 }
                 AddToActivityLogs($"Deleted candidate '{tempCandidate}'");
 
                 TempData["SuccessMessage"] = "Candidate deleted successfully!";
                 return RedirectToAction("ViewCandidates");
+            }
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult ViewEvent()
+        {
+            try
+            {
+                VoteEvent? voteEvent = this._context.VoteEvents.FirstOrDefault();
+                return View(voteEvent);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message.ToString();
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        [HttpGet]
+        public IActionResult CreateEvent()
+        {
+            if (this._context.CandidatePositions.Count() < 1)
+            {
+                TempData["ErrorMessage"] = "Please add candidate positions first!";
+                return RedirectToAction("ViewEvent");
+            }
+
+            if (this._context.Candidates.Count() < 1)
+            {
+                TempData["ErrorMessage"] = "Please add candidates first!";
+                return RedirectToAction("ViewEvent");
+            }
+
+            if (this._context.VoteEvents.Count() > 0)
+            {
+                TempData["ErrorMessage"] = "A vote event is already scheduled.";
+                return RedirectToAction("ViewEvent");
+            }
+
+            var candidates = this._context.Candidates.ToList();
+
+            foreach (var pos in this._context.CandidatePositions)
+            {
+                int count = candidates.Count(e => e.CandidatePositionId == pos.CandidatePositionId);
+                if (count < 2)
+                {
+                    TempData["ErrorMessage"] = "There should be at least two candidates each position to create an event.";
+                    return RedirectToAction("ViewEvent");
+                }
+            }
+
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateEvent(CreateEventViewModel model)
+        {
+            int resultStart = DateTime.Compare(DateTime.Now, model.StartDateTime);
+            int result = DateTime.Compare(model.StartDateTime, model.EndDateTime);
+
+            if (resultStart >= 0)
+            {
+                TempData["ErrorMessage"] = "The start date time has already passed. Please choose a valid date and time.";
+                return View(model);
+            }
+
+            if (result > 0)
+            {
+                TempData["ErrorMessage"] = "The start date time should be before the end date time.";
+                return View(model);
+            }
+
+            if (ModelState.IsValid)
+            {
+                VoteEvent voteEvent = new VoteEvent()
+                {
+                    StartDateTime = model.StartDateTime,
+                    EndDateTime = model.EndDateTime
+                };
+
+                await this._context.VoteEvents.AddAsync(voteEvent);
+                await this._context.SaveChangesAsync();
+
+                AddToActivityLogs($"Added new event");
+
+                TempData["SuccessMessage"] = "Vote event created successfully!";
+                return RedirectToAction("ViewEvent");
+            }
+
+            TempData["ErrorMessage"] = "Model state not valid!";
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult UpdateEvent(int? id)
+        {
+            try
+            {
+                var voteEvent = this._context.VoteEvents.Find(id);
+
+                if (voteEvent == null)
+                {
+                    return NotFound();
+                }
+
+                var model = new UpdateEventViewModel()
+                {
+                    VoteEventId = voteEvent.VoteEventId,
+                    StartDateTime = voteEvent.StartDateTime,
+                    EndDateTime = voteEvent.EndDateTime
+                };
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message.ToString();
+                return RedirectToAction("Index");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateEvent(UpdateEventViewModel model)
+        {
+            int resultStart = DateTime.Compare(DateTime.Now, model.StartDateTime);
+            int resultEnd = DateTime.Compare(DateTime.Now, model.EndDateTime);
+            int result = DateTime.Compare(model.StartDateTime, model.EndDateTime);
+
+            if (resultStart >= 0)
+            {
+                TempData["ErrorMessage"] = "The start date time has already passed. Please choose a valid date and time.";
+                return View(model);
+            }
+
+            if (resultEnd >= 0)
+            {
+                TempData["ErrorMessage"] = "The end date time has already passed. Please choose a valid date and time.";
+                return View(model);
+            }
+
+            if (result > 0)
+            {
+                TempData["ErrorMessage"] = "The start date time should be before the end date time.";
+                return View(model);
+            }
+
+            if (ModelState.IsValid)
+            {
+                var voteEvent = this._context.VoteEvents.Find(model.VoteEventId);
+
+                if (voteEvent == null)
+                {
+                    return NotFound();
+                }
+
+                voteEvent.StartDateTime = model.StartDateTime;
+                voteEvent.EndDateTime = model.EndDateTime;
+
+                await this._context.SaveChangesAsync();
+
+                AddToActivityLogs("Updated current event");
+                TempData["SuccessMessage"] = "Current event successfully updated!";
+                return RedirectToAction("ViewEvent");
+            }
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult DeleteEvent(int? id)
+        {
+            try
+            {
+                var voteEvent = this._context.VoteEvents.Find(id);
+
+                if (voteEvent == null)
+                {
+                    return NotFound();
+                }
+
+                var model = new UpdateEventViewModel()
+                {
+                    VoteEventId = voteEvent.VoteEventId,
+                    StartDateTime = voteEvent.StartDateTime,
+                    EndDateTime = voteEvent.EndDateTime
+                };
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message.ToString();
+                return RedirectToAction("ViewEvent");
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteEvent(UpdateEventViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var voteEvent = this._context.VoteEvents.Find(model.VoteEventId);
+
+                if (voteEvent == null)
+                {
+                    return NotFound();
+                }
+
+                this._context.VoteEvents.Remove(voteEvent);
+                await this._context.SaveChangesAsync();
+
+                AddToActivityLogs("Deleted event");
+                TempData["SuccessMessage"] = "Deleted event successfully!";
+                return RedirectToAction("ViewEvent");
+            }
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult ViewResetEvent()
+        {
+            if (this._context.VoteEvents.Count() < 1)
+            {
+                TempData["ErrorMessage"] = "There is currently no scheduled event. Schedule an event first.";
+                return RedirectToAction("ViewEvent");
+            }
+
+            try
+            {
+                VoteEvent? voteEvent = this._context.VoteEvents.FirstOrDefault();
+                return View(voteEvent);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message.ToString();
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        [HttpPost]
+        public IActionResult ResetEvent()
+        {
+            VoteEvent? voteEvent = this._context.VoteEvents.FirstOrDefault();
+
+            int resultStart = DateTime.Compare(DateTime.Now, voteEvent.StartDateTime);
+            int resultEnd = DateTime.Compare(DateTime.Now, voteEvent.EndDateTime);
+
+            if (resultStart < 0)
+            {
+                TempData["ErrorMessage"] = "The event has not yet started. You cannot reset this event.";
+                return RedirectToAction("ViewResetEvent");
+            }
+
+            if ((resultStart > 0) && (resultEnd < 0))
+            {
+                TempData["ErrorMessage"] = "The event is still ongoing. You cannot reset this event.";
+                return RedirectToAction("ViewResetEvent");
+            }
+
+            TruncateTables();
+            AddToActivityLogs("Election reset");
+
+            TempData["SuccessMessage"] = "Election has been successfully reset.";
+            return RedirectToAction("ViewEvent");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ManageVoters()
+        {
+            var voters = await userManager.GetUsersInRoleAsync("Voter");
+
+            return View(voters);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DeleteVoter(string id)
+        {
+            try
+            {
+                var voter = await userManager.FindByIdAsync(id);
+
+                if (voter == null)
+                {
+                    return NotFound();
+                }
+
+                var model = new DeleteVoterViewModel()
+                {
+                    VoterId = voter.Id,
+                    FirstName = voter.FirstName,
+                    MiddleName = voter.MiddleName,
+                    LastName = voter.LastName
+                };
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message.ToString();
+                return RedirectToAction("ManageVoters");
+            }
+        }
+
+        public async Task<IActionResult> DeleteVoter(DeleteVoterViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var voter = await userManager.FindByIdAsync(model.VoterId);
+
+                if (voter == null)
+                {
+                    return NotFound();
+                }
+
+                var tempName = voter.FullName;
+                var tempPhoto = voter.Photo;
+                var result = await userManager.DeleteAsync(voter);
+
+                if (result.Succeeded)
+                {
+                    if (tempPhoto != null)
+                    {
+                        DeletePhoto(tempPhoto, "user");
+                    }
+                    AddToActivityLogs($"Deleted voter '{tempName}'");
+
+                    TempData["SuccessMessage"] = "Voter deleted successfully!";
+                    return RedirectToAction("ManageVoters");
+                }
+                
             }
 
             return View(model);
@@ -771,7 +831,7 @@ namespace OnlineVotingWebApp.Controllers
             DeleteAllPhotos();
         }
 
-        private string ProcessUploadedFile(IFormFile photo)
+        private string ProcessUploadedPhoto(IFormFile photo)
         {
             string uploadsFolder = Path.Combine(webHostEnvironment.WebRootPath, "img/candidate");
             string uniqueFileName = Guid.NewGuid().ToString() + "_" + photo.FileName;
@@ -784,22 +844,29 @@ namespace OnlineVotingWebApp.Controllers
             return uniqueFileName;
         }
 
-        public IActionResult DeletePhoto(string fileName)
+        public IActionResult DeletePhoto(string fileName, string person)
         {
             try
             {
+                string? fullPath = null;
+
                 // Combine the web root path with the file path
-                var fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img/candidate", fileName);
+                if (person == "candidate")
+                {
+                    fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img/candidate", fileName);
+                } 
+                else if (person == "user")
+                {
+                    fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img/user", fileName);
+                }    
 
                 // Delete the file
                 System.IO.File.Delete(fullPath);
 
-                // Return success response
                 return Ok("File deleted successfully.");
             }
             catch (Exception ex)
             {
-                // Handle any exceptions that may occur during file deletion
                 return BadRequest($"Error deleting file: {ex.Message}");
             }
         }
@@ -816,10 +883,6 @@ namespace OnlineVotingWebApp.Controllers
                 {
                     file.Delete();
                 }
-                //foreach (DirectoryInfo dir in di.GetDirectories())
-                //{
-                //    dir.Delete(true);
-                //}
 
                 return Ok("Files deleted successfully.");
             }

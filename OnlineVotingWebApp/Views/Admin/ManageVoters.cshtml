@@ -22,12 +22,11 @@
         <table class="table table-bordered table-striped table-hover" id="votersTable">
             <thead>
                 <tr>
-                    <th>Voter ID</th>
-                    <th>Full Name</th>
-                    <th>Sex</th>
-                    <th>Date Of Birth</th>
-                    <th>Civil Status</th>
-                    <th>Action</th>
+                    <th class="align-middle">Voter ID</th>
+                    <th class="align-middle">Full Name</th>
+                    <th class="align-middle">Sex</th>
+                    <th class="align-middle">Has Voted</th>
+                    <th class="align-middle">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -39,8 +38,7 @@
                             <td class="align-middle">@voter.Id</td>
                             <td class="align-middle">@voter.FullName</td>
                             <td class="align-middle">@voter.Sex</td>
-                            <td class="align-middle">@voter.DateOfBirth.ToString("MMMM dd, yyyy")</td>
-                            <td class="alig-middle">@voter.CivilStatus</td>
+                            <td class="align-middle">No</td>
                             <td class="align-middle">
                                 <a class="btn btn-sm btn-danger" asp-controller="Admin" asp-action="DeleteVoter" asp-route-id="@voter.Id">
                                     Delete

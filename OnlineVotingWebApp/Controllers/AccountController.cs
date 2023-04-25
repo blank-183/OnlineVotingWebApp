@@ -5,6 +5,8 @@ using OnlineVotingWebApp.Data;
 using OnlineVotingWebApp.Models;
 using OnlineVotingWebApp.ViewModels;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace OnlineVotingWebApp.Controllers
 {
@@ -62,7 +64,15 @@ namespace OnlineVotingWebApp.Controllers
                     return RedirectToAction("Index", "Home");
                 }
 
-                ModelState.AddModelError(string.Empty, "Invalid user login credentials.");
+                ModelState.AddModelError(string.Empty, "Invalid user credentials.");
+
+                var email = await userManager.FindByEmailAsync(model.Email);
+
+                if (email != null)
+                {
+                    string userId = email.Id;
+                    AddToActivityLogs("Failed login attempt", userId);
+                }
             }
             return View(model);
         }
@@ -86,18 +96,29 @@ namespace OnlineVotingWebApp.Controllers
             if (ModelState.IsValid)
             {
                 string? uniqueFileName = null;
-                string actionDesc = "User created";
 
                 if (model.Photo != null)
                 {
-                    uniqueFileName = ProcessUploadedFile(model.Photo);
+                    uniqueFileName = ProcessUploadedPhoto(model.Photo);
+                }
+
+                TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+                string firstName = textInfo.ToTitleCase(model.FirstName.ToLower());
+                string? middleName = null;
+                string lastName = textInfo.ToTitleCase(model.LastName.ToLower());
+                string province = textInfo.ToTitleCase(model.Province.ToLower());
+                string municipality = textInfo.ToTitleCase(model.Municipality.ToLower());
+
+                if (!string.IsNullOrEmpty(model.MiddleName))
+                {
+                    middleName = textInfo.ToTitleCase(model.MiddleName.ToLower());
                 }
 
                 var user = new ApplicationUser() 
                 {
-                    FirstName = model.FirstName,
-                    MiddleName = model.MiddleName,
-                    LastName = model.LastName,
+                    FirstName = firstName,
+                    MiddleName = middleName,
+                    LastName = lastName,
                     Sex = model.Sex,
                     CivilStatus = model.CivilStatus,
                     DateOfBirth = model.DateOfBirth,
@@ -111,29 +132,28 @@ namespace OnlineVotingWebApp.Controllers
                 {
                     UserId = user.Id,
                     Region = model.Region,
-                    Province = model.Province,
-                    Municipality = model.Municipality,
+                    Province = province,
+                    Municipality = municipality,
                     AddressLine = model.AddressLine,
-                };
-
-                var log = new ActivityLog()
-                {
-                    UserId = user.Id,
-                    Description = actionDesc
                 };
 
                 var result = await userManager.CreateAsync(user, model.Password);
                 
                 if (result.Succeeded)
                 {
-
                     await this._context.Addresses.AddAsync(address);
-                    await this._context.ActivityLogs.AddAsync(log);
                     await this._context.SaveChangesAsync();
                     await userManager.AddToRoleAsync(user, "Voter");
+
+                    AddToActivityLogs("New voter account created", user.Id);
                 
                     TempData["SuccessMessage"] = "Your registration was successful! You may now sign in.";
                     return RedirectToAction("Login", "Account");
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
                 }
             }
             return View(model);
@@ -166,6 +186,21 @@ namespace OnlineVotingWebApp.Controllers
             }
         }
 
+        [AcceptVerbs("Get", "Post")]
+        public async Task<IActionResult> IsPhoneNumberInUse(string phoneNumber)
+        {
+            var user = await userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber == phoneNumber);
+
+            if (user == null)
+            {
+                return Json(true);
+            }
+            else
+            {
+                return Json($"Phone number is already in use");
+            }
+        }
+
         private void AddToActivityLogs(string actionDesc)
         {
             var userId = userManager.GetUserId(User);
@@ -180,7 +215,19 @@ namespace OnlineVotingWebApp.Controllers
             this._context.SaveChanges();
         }
 
-        private string ProcessUploadedFile(IFormFile photo)
+        private void AddToActivityLogs(string actionDesc, string userId)
+        {
+            var log = new ActivityLog()
+            {
+                UserId = userId,
+                Description = actionDesc,
+            };
+
+            this._context.ActivityLogs.Add(log);
+            this._context.SaveChanges();
+        }
+
+        private string ProcessUploadedPhoto(IFormFile photo)
         {
             string uploadsFolder = Path.Combine(webHostEnvironment.WebRootPath, "img/user");
             string uniqueFileName = Guid.NewGuid().ToString() + "_" + photo.FileName;
@@ -192,5 +239,6 @@ namespace OnlineVotingWebApp.Controllers
 
             return uniqueFileName;
         }
+
     }
 }
