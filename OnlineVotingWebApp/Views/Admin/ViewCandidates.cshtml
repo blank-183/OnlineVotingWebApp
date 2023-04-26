@@ -27,7 +27,7 @@
                     <th>Candidate Name</th>
                     <th>Candidate Position</th>
                     <th>Party</th>
-                    <th>Photo Path</th>
+                    <th>Photo</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -41,8 +41,9 @@
                             <td class="align-middle">@candidate.FullName</td>
                             <td class="align-middle">@candidate.CandidatePositionName</td>
                             <td class="align-middle">@candidate.Party</td>
-                            <td class="align-middle">@candidate.Photo</td>
-                            <td class="align-middle" style="width: 15%;">
+                            @*<td class="align-middle">@candidate.Photo</td>*@
+                            <td class="align-middle" align="center"><img src="~/img/candidate/@candidate.Photo" style="width: 75px; height:75px; object-fit: cover;"></td>
+                            <td class="align-middle" align="center" style="width: 15%;">
                                 <a class="btn btn-sm btn-primary" asp-controller="Admin" asp-action="UpdateCandidate" asp-route-id="@candidate.CandidateId">
                                     Update
                                 </a>

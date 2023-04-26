@@ -11,7 +11,7 @@ html {
 body::before {
     display: block;
     content: '';
-    height: 100px;
+    height: 90px;
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
@@ -30,5 +30,41 @@ body {
 .container-login {
     background-color: #fff;
     /*border-radius: 25px;*/
-    box-shadow: 0px 0px 10px 1px #D9D9D9;
+    box-shadow: 0px 0px 5px 1px #D9D9D9;
+}
+
+.h1-big {
+    font-size: 55px;
+}
+
+.background-div {
+    background-image: url('/img/flag1.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 250px;
+    display: flex; /* Use Flexbox */
+    justify-content: center; /* Center the content horizontally */
+    align-items: center;
+}
+
+h1 {
+    font-size: 50px !important; /* Default font size */
+}
+
+@media (max-width: 992px) {
+    h1 {
+        font-size: 40px !important; /* Font size for screens with viewport width up to 768px */
+    }
+}
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 30px  !important; /* Font size for screens with viewport width up to 768px */
+    }
+}
+
+@media (max-width: 576px) {
+    h1 {
+        font-size: 25px !important; /* Font size for screens with viewport width up to 480px */
+    }
 }
