@@ -40,6 +40,8 @@ namespace OnlineVotingWebApp.Models
 
         public Address Address { get; set; } = null!;
 
+        public Vote? Vote { get; set; }
+
         public ICollection<ActivityLog> ActivityLogs { get; set; }
 
         [NotMapped]

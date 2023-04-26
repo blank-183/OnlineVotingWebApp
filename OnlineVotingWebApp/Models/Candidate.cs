@@ -9,7 +9,7 @@ namespace OnlineVotingWebApp.Models
         [Key]
         public int CandidateId { get; set; }
 
-        public int? CandidatePositionId { get; set; } = null!;
+        public int CandidatePositionId { get; set; }
 
         [StringLength(30)]
         [Unicode(false)]
@@ -32,6 +32,8 @@ namespace OnlineVotingWebApp.Models
         public string? Photo { get; set; }
 
         public CandidatePosition? CandidatePosition { get; set; }
+
+        public ICollection<Transaction> Transactions { get; set; }
 
         [NotMapped]
         public string FullName

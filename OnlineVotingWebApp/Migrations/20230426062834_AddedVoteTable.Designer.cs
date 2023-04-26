@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineVotingWebApp.Data;
 
@@ -11,9 +12,11 @@ using OnlineVotingWebApp.Data;
 namespace OnlineVotingWebApp.Migrations
 {
     [DbContext(typeof(OnlineVotingDbContext))]
-    partial class OnlineVotingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230426062834_AddedVoteTable")]
+    partial class AddedVoteTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -369,33 +372,6 @@ namespace OnlineVotingWebApp.Migrations
                     b.ToTable("CandidatePositions");
                 });
 
-            modelBuilder.Entity("OnlineVotingWebApp.Models.Transaction", b =>
-                {
-                    b.Property<int>("TransactionId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TransactionId"));
-
-                    b.Property<int>("CandidateId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsSelected")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("VoteId")
-                        .HasColumnType("int");
-
-                    b.HasKey("TransactionId")
-                        .HasName("PK__Transaction__TransactionId");
-
-                    b.HasIndex("CandidateId");
-
-                    b.HasIndex("VoteId");
-
-                    b.ToTable("Transactions");
-                });
-
             modelBuilder.Entity("OnlineVotingWebApp.Models.Vote", b =>
                 {
                     b.Property<int>("VoteId")
@@ -572,25 +548,6 @@ namespace OnlineVotingWebApp.Migrations
                     b.Navigation("CandidatePosition");
                 });
 
-            modelBuilder.Entity("OnlineVotingWebApp.Models.Transaction", b =>
-                {
-                    b.HasOne("OnlineVotingWebApp.Models.Candidate", "Candidate")
-                        .WithMany("Transactions")
-                        .HasForeignKey("CandidateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("OnlineVotingWebApp.Models.Vote", "Vote")
-                        .WithMany("Transactions")
-                        .HasForeignKey("VoteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Candidate");
-
-                    b.Navigation("Vote");
-                });
-
             modelBuilder.Entity("OnlineVotingWebApp.Models.Vote", b =>
                 {
                     b.HasOne("OnlineVotingWebApp.Models.ApplicationUser", "ApplicationUser")
@@ -602,19 +559,9 @@ namespace OnlineVotingWebApp.Migrations
                     b.Navigation("ApplicationUser");
                 });
 
-            modelBuilder.Entity("OnlineVotingWebApp.Models.Candidate", b =>
-                {
-                    b.Navigation("Transactions");
-                });
-
             modelBuilder.Entity("OnlineVotingWebApp.Models.CandidatePosition", b =>
                 {
                     b.Navigation("Candidates");
-                });
-
-            modelBuilder.Entity("OnlineVotingWebApp.Models.Vote", b =>
-                {
-                    b.Navigation("Transactions");
                 });
 
             modelBuilder.Entity("OnlineVotingWebApp.Models.ApplicationUser", b =>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using OnlineVotingWebApp.Models;
@@ -23,6 +24,8 @@ public partial class OnlineVotingDbContext : IdentityDbContext
     public virtual DbSet<VoteEvent> VoteEvents { get; set; }
     public virtual DbSet<CandidatePosition> CandidatePositions { get; set; }
     public virtual DbSet<Candidate> Candidates { get; set; }
+    public virtual DbSet<Vote> Votes { get; set; }
+    public virtual DbSet<Transaction> Transactions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -71,6 +74,33 @@ public partial class OnlineVotingDbContext : IdentityDbContext
         modelBuilder.Entity<VoteEvent>(entity =>
         {
             entity.HasKey(e => e.VoteEventId).HasName("PK__VoteEven__9EF87FEC1BBBED19");
+        });
+
+        modelBuilder.Entity<Vote>(entity =>
+        {
+            entity.HasKey(e => e.VoteId).HasName("PK__Vote__VoteId");
+
+            entity.HasOne(d => d.ApplicationUser)
+            .WithOne(e => e.Vote)
+            .HasForeignKey<Vote>(e => e.VoterId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        });
+
+        modelBuilder.Entity<Transaction>(entity =>
+        {
+            entity.HasKey(e => e.TransactionId).HasName("PK__Transaction__TransactionId");
+
+            entity.HasOne(d => d.Candidate)
+            .WithMany(e => e.Transactions)
+            .HasForeignKey(e => e.CandidateId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(d => d.Vote)
+            .WithMany(e => e.Transactions)
+            .HasForeignKey(e => e.VoteId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         });
 
         OnModelCreatingPartial(modelBuilder);
