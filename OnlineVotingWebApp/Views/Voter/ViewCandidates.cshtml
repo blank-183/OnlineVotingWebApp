@@ -2,87 +2,43 @@
 @{
     ViewData["Title"] = "View Candidates";
 }
-
 <div class="background-div p-4 text-center align-items-center justify-content-center">
-    <h1 class="text-center text-white m-2"><strong>OFFICIAL PRESIDENTIAL CANDIDATES IN THE PHILIPPINES' 2022 NATIONAL ELECTIONS</strong></h1>
+    <h1 class="text-center text-white m-2"><strong>OFFICIAL PRESIDENTIAL CANDIDATES IN THE PHILIPPINES' @DateTime.Now.Year NATIONAL ELECTIONS</strong></h1>
 </div>
 
 <div class="container bg-white p-5">
-    
-
-
     @foreach (var position in ViewBag.CandidatePositions)
     {
         <div class="bg-dark p-1 text-center">
             <h2 class="text-white mt-2">@position.CandidatePositionName.ToUpper()</h2>
         </div>
         <hr />
-        <div class="row g-4 my-4">
-            @{
-                var candidates = Model.Where(e => e.CandidatePositionId == position.CandidatePositionId);
-            }
-            @foreach (var candidate in candidates)
-            {
-                <div class="col-md-6 col-lg-4 px-3">
-                    <div class="card py-3">
-                        <div class="card-body text-center">
-                            <img src="~/img/candidate/@candidate.Photo" class="rounded-circle mb-3" alt="" style="width:200px; height:200px; object-fit:cover;">
-                            <div class="bg-white border">
-                                <div class="card-title">
-                                    <h3 class="mt-3">@candidate.FullName</h3>
+        <section>
+            <div class="row g-3 my-4">
+                @{
+                    var candidates = Model.Where(e => e.CandidatePositionId == position.CandidatePositionId);
+                }
+                @foreach (var candidate in candidates)
+                {
+                    <div class="col-md-6 col-lg-4 px-3 my-3">
+                        <div class="card bg-light py-3 container-login" style="border-radius: 0;">
+                            <div class="card-body text-center">
+                                <img src="~/img/candidate/@candidate.Photo" class="rounded-circle mb-3" alt="" style="width:200px; height:200px; object-fit:cover;">
+                                <div class="bg-white border">
+                                    <div class="card-title text-dark">
+                                        <h3 class="mt-3">@candidate.FullName.ToUpper()</h3>
+                                    </div>
+                                    <hr />
+                                    <p class="lead px-1">
+                                        Party: @candidate.Party
+                                    </p>
                                 </div>
-                                <hr />
-                                <p class="lead px-1">
-                                    Party: @candidate.Party
-                                </p>
                             </div>
                         </div>
                     </div>
-                </div>
-            }
-        </div>
+                }
+            </div>
+        </section>
+
     }
-
-
-    @*<h2>PRESIDENT</h2>
-    <hr />
-    <div class="row g-4 my-4">
-        <div class="col-md-6 col-lg-4 px-3">
-            <div class="card py-3">
-                <div class="card-body text-center">
-                    <img src="~/img/candidate/55c4de88-b618-446a-bffc-9ff961074182_leni.jpg" class="rounded-circle mb-3" alt="" style="width:200px; height:200px; object-fit:cover;">
-                    <div class="bg-white border">
-                        <div class="card-title">
-                            <h3 class="mt-3">LENI ROBREDO</h3>
-                        </div>
-                        <hr />
-                        <p class="lead px-1">
-                            Party: Independent
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <h2 class="mt-5">VICE PRESIDENT</h2>
-    <hr />
-    <div class="row g-4 my-4">
-        <div class="col-md-6 col-lg-4 px-3">
-            <div class="card py-3">
-                <div class="card-body text-center">
-                    <img src="~/img/candidate/55c4de88-b618-446a-bffc-9ff961074182_leni.jpg" class="rounded-circle mb-3" alt="" style="width:200px; height:200px; object-fit:cover;">
-                    <div class="bg-white border">
-                        <div class="card-title">
-                            <h3 class="mt-3">LENI ROBREDO</h3>
-                        </div>
-                        <hr />
-                        <p class="lead px-1">
-                            Party: Partido Federal ng Pilipinas
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>*@
 </div>
