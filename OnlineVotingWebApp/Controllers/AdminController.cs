@@ -15,17 +15,17 @@ namespace OnlineVotingWebApp.Controllers
     [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
-        private readonly UserManager<ApplicationUser> userManager;
-        private readonly RoleManager<IdentityRole> roleManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly OnlineVotingDbContext _context;
-        private readonly IWebHostEnvironment webHostEnvironment;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
         public AdminController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, OnlineVotingDbContext context, IWebHostEnvironment webHostEnvironment)
         {
-            this.userManager = userManager;
-            this.roleManager = roleManager;
+            this._userManager = userManager;
+            this._roleManager = roleManager;
             this._context = context;
-            this.webHostEnvironment = webHostEnvironment;
+            this._webHostEnvironment = webHostEnvironment;
         }
 
         [HttpGet]
@@ -476,7 +476,7 @@ namespace OnlineVotingWebApp.Controllers
             int resultStart = DateTime.Compare(DateTime.Now, model.StartDateTime);
             int result = DateTime.Compare(model.StartDateTime, model.EndDateTime);
 
-            if (resultStart >= 0)
+            if (resultStart > 0)
             {
                 TempData["ErrorMessage"] = "The start date time has already passed. Please choose a valid date and time.";
                 return View(model);
@@ -541,20 +541,20 @@ namespace OnlineVotingWebApp.Controllers
         public async Task<IActionResult> UpdateEvent(UpdateEventViewModel model)
         {
             int resultStart = DateTime.Compare(DateTime.Now, model.StartDateTime);
-            int resultEnd = DateTime.Compare(DateTime.Now, model.EndDateTime);
+            //int resultEnd = DateTime.Compare(DateTime.Now, model.EndDateTime);
             int result = DateTime.Compare(model.StartDateTime, model.EndDateTime);
 
-            if (resultStart >= 0)
+            if (resultStart > 0)
             {
                 TempData["ErrorMessage"] = "The start date time has already passed. Please choose a valid date and time.";
                 return View(model);
             }
 
-            if (resultEnd >= 0)
-            {
-                TempData["ErrorMessage"] = "The end date time has already passed. Please choose a valid date and time.";
-                return View(model);
-            }
+            //if (resultEnd > 0)
+            //{
+            //    TempData["ErrorMessage"] = "The end date time has already passed. Please choose a valid date and time.";
+            //    return View(model);
+            //}
 
             if (result > 0)
             {
@@ -687,7 +687,8 @@ namespace OnlineVotingWebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> ManageVoters()
         {
-            var voters = await userManager.GetUsersInRoleAsync("Voter");
+            var voters = await this._userManager.GetUsersInRoleAsync("Voter");
+            ViewBag.Votes = await this._context.Votes.ToListAsync();
 
             return View(voters);
         }
@@ -697,7 +698,7 @@ namespace OnlineVotingWebApp.Controllers
         {
             try
             {
-                var voter = await userManager.FindByIdAsync(id);
+                var voter = await _userManager.FindByIdAsync(id);
 
                 if (voter == null)
                 {
@@ -725,7 +726,7 @@ namespace OnlineVotingWebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var voter = await userManager.FindByIdAsync(model.VoterId);
+                var voter = await _userManager.FindByIdAsync(model.VoterId);
 
                 if (voter == null)
                 {
@@ -734,7 +735,7 @@ namespace OnlineVotingWebApp.Controllers
 
                 var tempName = voter.FullName;
                 var tempPhoto = voter.Photo;
-                var result = await userManager.DeleteAsync(voter);
+                var result = await _userManager.DeleteAsync(voter);
 
                 if (result.Succeeded)
                 {
@@ -786,7 +787,7 @@ namespace OnlineVotingWebApp.Controllers
                     Name = model.RoleName
                 };
 
-                IdentityResult result = await roleManager.CreateAsync(identityRole);
+                IdentityResult result = await _roleManager.CreateAsync(identityRole);
 
                 if (result.Succeeded)
                 {
@@ -802,7 +803,7 @@ namespace OnlineVotingWebApp.Controllers
 
         private void AddToActivityLogs(string actionDesc)
         {
-            var userId = userManager.GetUserId(User);
+            var userId = _userManager.GetUserId(User);
 
             var log = new ActivityLog()
             {
@@ -820,12 +821,16 @@ namespace OnlineVotingWebApp.Controllers
             this._context.Database.ExecuteSqlRaw("DELETE FROM CandidatePositions");
             this._context.Database.ExecuteSqlRaw("DELETE FROM ActivityLogs");
             this._context.Database.ExecuteSqlRaw("DELETE FROM VoteEvent");
+            this._context.Database.ExecuteSqlRaw("DELETE FROM Transactions");
+            this._context.Database.ExecuteSqlRaw("DELETE FROM Votes");
 
             // Reseed identity of tables
             this._context.Database.ExecuteSqlRaw("DBCC CHECKIDENT ('CandidatePositions', RESEED, 0)");
             this._context.Database.ExecuteSqlRaw("DBCC CHECKIDENT ('Candidates', RESEED, 0)");
             this._context.Database.ExecuteSqlRaw("DBCC CHECKIDENT ('ActivityLogs', RESEED, 0)");
             this._context.Database.ExecuteSqlRaw("DBCC CHECKIDENT ('VoteEvent', RESEED, 0)");
+            this._context.Database.ExecuteSqlRaw("DBCC CHECKIDENT ('Transactions', RESEED, 0)");
+            this._context.Database.ExecuteSqlRaw("DBCC CHECKIDENT ('Votes', RESEED, 0)");
 
             // Delete all candidate photos
             DeleteAllPhotos();
@@ -833,7 +838,7 @@ namespace OnlineVotingWebApp.Controllers
 
         private string ProcessUploadedPhoto(IFormFile photo)
         {
-            string uploadsFolder = Path.Combine(webHostEnvironment.WebRootPath, "img/candidate");
+            string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "img/candidate");
             string uniqueFileName = Guid.NewGuid().ToString() + "_" + photo.FileName;
             string filePath = Path.Combine(uploadsFolder, uniqueFileName);
             using (var fileStream = new FileStream(filePath, FileMode.Create))

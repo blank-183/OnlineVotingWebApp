@@ -25,7 +25,15 @@
         </div>
     </div>
     <p class="text-danger">*You cannot undo this action.</p>
-    <p class="text-danger">*Resetting event will truncate the <strong>candidate positions</strong>, <strong>candidates</strong>, <strong>vote event</strong>, and <strong>user logs</strong> table.</p>
+    <p class="text-danger">*Resetting event will delete all the data in the ff. tables:
+        <ul class="text-danger">
+            <li>Candidate positions</li>
+            <li>Candidates</li>
+            <li>Vote event</li>
+            <li>Votes</li>
+            <li>Transactions</li>
+            <li>User Logs</li>
+        </ul>
     <form method="post" asp-controller="Admin" asp-action="ResetEvent">
         <div class="mt-3 btn-group">
             <button type="submit" class="btn btn-danger">Reset</button>

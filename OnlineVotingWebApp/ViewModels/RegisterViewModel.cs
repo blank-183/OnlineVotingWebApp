@@ -12,7 +12,7 @@ namespace OnlineVotingWebApp.ViewModels
     {
         [Display(Name = "First Name")]
         [Required]
-        [RegularExpression(@"^[a-zA-Z''-'\s]*$", ErrorMessage = "Uppercase and lowercase letters only")]
+        [RegularExpression(@"^[a-zA-Z''-'-\s]*$", ErrorMessage = "Dashes, lowercase and uppercase letters only")]
         public string FirstName { get; set; }
 
         [RegularExpression(@"^[a-zA-Z''-'\s]*$", ErrorMessage = "Uppercase and lowercase letters only")]

@@ -1,0 +1,34 @@
+﻿@{
+    ViewData["Title"] = "Voting Form";
+}
+
+<div class="container w-50 container-login p-5 bg-white container-shadow" style="max-width: 500px; min-width: 350px;">
+    <form class="px-3" method="post" asp-controller="Voter" asp-action="CastVote">
+        <h2 class="text-center"><strong>VOTE BALLOT</strong></h2>
+        <hr class="mb-4" />
+        @for (var i = 0; i < ViewBag.CandidatePositions.Count; i++)
+        {
+            var candidates = ((List<Candidate>)ViewBag.Candidates).Where(e => e.CandidatePositionId == ViewBag.CandidatePositions[i].CandidatePositionId);
+            <div class="form-group mb-4">
+                <h6 class="mt-2">@ViewBag.CandidatePositions[i].CandidatePositionName</h6>
+                <select name="candidateIds[@i]" class="form-control">
+                    <option value="">-- Select Candidate --</option>
+                    <option value="0" class="text-danger">Abstain</option>
+                    @foreach (var candidate in candidates)
+                    {
+                        <option value="@candidate.CandidateId">@candidate.FullName</option>
+                    }
+                </select>
+            </div>
+        }
+        <div class="mt-5">
+            <button type="submit" class="btn btn-primary w-100">Cast Vote</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

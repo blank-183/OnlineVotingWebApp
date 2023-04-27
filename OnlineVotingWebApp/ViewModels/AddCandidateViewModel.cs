@@ -11,9 +11,10 @@ namespace OnlineVotingWebApp.ViewModels
 
         [Display(Name = "First Name")]
         [Required]
-        [RegularExpression(@"^[a-zA-Z''-'\s]*$", ErrorMessage = "Uppercase and lowercase letters only")]
+        [RegularExpression(@"^[a-zA-Z''-'-\s]*$", ErrorMessage = "Dashes, lowercase and uppercase letters only")]
         public string FirstName { get; set; } = null!;
 
+        [Display(Name = "Middle Name")]
         [RegularExpression(@"^[a-zA-Z''-'\s]*$", ErrorMessage = "Uppercase and lowercase letters only")]
         public string? MiddleName { get; set; }
 
@@ -22,9 +23,8 @@ namespace OnlineVotingWebApp.ViewModels
         [RegularExpression(@"^[a-zA-Z''-'\s]*$", ErrorMessage = "Uppercase and lowercase letters only")]
         public string LastName { get; set; } = null!;
 
-        [Display(Name = "Last Name")]
         [Required]
-        [RegularExpression(@"^[a-zA-Z''-'\s]*$", ErrorMessage = "Uppercase and lowercase letters only")]
+        [RegularExpression(@"^[a-zA-Z''-'-\s]*$", ErrorMessage = "Dashes, lowercase and uppercase letters only")]
         public string Party { get; set; } = null!;
 
         public IFormFile? Photo { get; set; }
