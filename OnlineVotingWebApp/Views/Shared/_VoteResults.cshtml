@@ -1,0 +1,16 @@
+﻿@model VoteResultViewModel
+
+@foreach (var pos in Model.CandidatePositions)
+{
+    <h2>@pos.CandidatePositionName</h2>
+    @foreach (var candidate in Model.Candidates.Where(d => d.CandidatePositionId == pos.CandidatePositionId))
+    {
+        <p>Candidate name: @candidate.FullName</p>
+        <p>Votes: @Model.CandidateVoteCount[candidate.CandidateId]</p>
+        <p>Percentage: @(((double)Model.CandidateVoteCount[candidate.CandidateId] / Model.TotalVotes) * 100)</p>
+    }
+    <p>TOTAL VOTES IN POSITION: @Model.PositionVoteCount[pos.CandidatePositionId]</p>
+    <p>ABSTAIN: @(Model.TotalVotes - Model.PositionVoteCount[pos.CandidatePositionId])</p>
+    <p>ABSTAIN PERCENTAGE: @((((double)Model.TotalVotes - Model.PositionVoteCount[pos.CandidatePositionId]) / Model.TotalVotes) * 100)</p>
+}
+<p>NUMBER OF VOTERS WHO VOTED: @Model.TotalVotes</p>

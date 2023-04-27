@@ -26,25 +26,6 @@ namespace OnlineVotingWebApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ViewCandidates()
-        {
-            VoteEvent? voteEvent = this._context.VoteEvents.FirstOrDefault();
-
-            if (voteEvent == null)
-            {
-                TempData["ErrorMessage"] = "No event has been scheduled";
-                return RedirectToAction("Index", "Home");
-            }
-
-            List<CandidatePosition> candidatePositions = await this._context.CandidatePositions.ToListAsync();
-            ViewBag.CandidatePositions = candidatePositions;
-            
-            List<Candidate> candidates = await this._context.Candidates.ToListAsync();
-
-            return View(candidates);
-        }
-
-        [HttpGet]
         public async Task<IActionResult> VotingForm()
         {
             VoteEvent? voteEvent = this._context.VoteEvents.FirstOrDefault();
@@ -70,7 +51,7 @@ namespace OnlineVotingWebApp.Controllers
             }
 
             var voterId = this._userManager.GetUserId(User);
-            var voter = this._context.Votes.FirstOrDefault(e => e.VoterId == voterId);
+            var voter = await this._context.Votes.FirstOrDefaultAsync(e => e.VoterId == voterId);
 
             if (voter != null)
             {
@@ -135,8 +116,6 @@ namespace OnlineVotingWebApp.Controllers
             
             //TODO: Palitan ang page
             return RedirectToAction("Index", "Home");
-
-            //return RedirectToAction("ThankYou"); // Redirect to a thank you page or any other appropriate action
         }
 
         private void AddToActivityLogs(string actionDesc)

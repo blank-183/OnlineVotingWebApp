@@ -37,14 +37,12 @@
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="VoteResults">Election Status</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Voter" asp-action="ViewCandidates">Candidates</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="ViewCandidates">Candidates</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Voter" asp-action="VotingForm">Vote</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Voter" asp-action="UserGuide">User Guide</a>
-                        </li>
+                     
                     </ul>
                     <ul class="navbar-nav ml-auto">
                         @if (signInManager.IsSignedIn(User))

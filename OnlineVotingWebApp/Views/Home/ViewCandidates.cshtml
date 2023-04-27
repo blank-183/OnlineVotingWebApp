@@ -2,10 +2,13 @@
 @{
     ViewData["Title"] = "View Candidates";
 }
-<div class="background-div p-4 text-center align-items-center justify-content-center">
+@*<div class="background-div p-4 text-center align-items-center justify-content-center">
     <h1 class="text-center text-white m-2"><strong>OFFICIAL CANDIDATES IN THE PHILIPPINES' @DateTime.Now.Year NATIONAL ELECTIONS</strong></h1>
-</div>
+</div>*@
 
+<div class="background-div p-4 text-center align-items-center justify-content-center">
+    <h1 class="text-center text-white m-2"><strong>HALALAN @DateTime.Now.Year PHILIPPINE ELECTION CANDIDATES</strong></h1>
+</div>
 <div class="container bg-white p-5">
     @foreach (var position in ViewBag.CandidatePositions)
     {
@@ -24,13 +27,6 @@
                         <div class="card-body text-center">
                             <img src="~/img/candidate/@candidate.Photo" class="rounded-circle mb-3" alt="" style="width:200px; height:200px; object-fit:cover; border: 5px solid lightgray">
                             <div class="bg-white border">
-                                @*<div class="card-title text-white bg-dark">
-                        <h3 class="mt-3">@candidate.FullName.ToUpper()</h3>
-                        </div>
-                        <hr />
-                        <p class="lead px-1">
-                        Party: @candidate.Party
-                        </p>*@
                                 <ul class="list-group list-group-flush">
                                     <li class="list-group-item bg-dark text-white"><strong>@candidate.FullName.ToUpper()</strong></li>
                                     <li class="list-group-item">Party: @candidate.Party</li>

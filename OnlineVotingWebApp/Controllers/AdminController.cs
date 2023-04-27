@@ -451,7 +451,7 @@ namespace OnlineVotingWebApp.Controllers
 
             if (this._context.VoteEvents.Count() > 0)
             {
-                TempData["ErrorMessage"] = "A vote event is already scheduled.";
+                TempData["ErrorMessage"] = "Election event has already been scheduled.";
                 return RedirectToAction("ViewEvent");
             }
 
@@ -462,7 +462,7 @@ namespace OnlineVotingWebApp.Controllers
                 int count = candidates.Count(e => e.CandidatePositionId == pos.CandidatePositionId);
                 if (count < 2)
                 {
-                    TempData["ErrorMessage"] = "There should be at least two candidates each position to create an event.";
+                    TempData["ErrorMessage"] = "There must be at least two candidates running for each position to schedule an election.";
                     return RedirectToAction("ViewEvent");
                 }
             }
@@ -540,25 +540,24 @@ namespace OnlineVotingWebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateEvent(UpdateEventViewModel model)
         {
-            int resultStart = DateTime.Compare(DateTime.Now, model.StartDateTime);
-            //int resultEnd = DateTime.Compare(DateTime.Now, model.EndDateTime);
+            //int resultStart = DateTime.Compare(DateTime.Now, model.StartDateTime);
+            int resultEnd = DateTime.Compare(DateTime.Now, model.EndDateTime);
             int result = DateTime.Compare(model.StartDateTime, model.EndDateTime);
 
-            if (resultStart > 0)
+            //if (resultStart > 0)
+            //{
+            //    TempData["ErrorMessage"] = "The start date time has already passed. Please choose a valid date and time.";
+            //    return View(model);
+            //}
+            if (result >= 0)
             {
-                TempData["ErrorMessage"] = "The start date time has already passed. Please choose a valid date and time.";
+                TempData["ErrorMessage"] = "The start date time should be before the end date time.";
                 return View(model);
             }
 
-            //if (resultEnd > 0)
-            //{
-            //    TempData["ErrorMessage"] = "The end date time has already passed. Please choose a valid date and time.";
-            //    return View(model);
-            //}
-
-            if (result > 0)
+            if (resultEnd >= 0)
             {
-                TempData["ErrorMessage"] = "The start date time should be before the end date time.";
+                TempData["ErrorMessage"] = "The end date time has already passed. Please choose a valid date and time.";
                 return View(model);
             }
 

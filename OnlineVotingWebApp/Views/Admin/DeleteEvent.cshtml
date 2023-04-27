@@ -4,8 +4,8 @@
     ViewData["Title"] = "Delete Event";
 }
 
-<div class="container w-50 container-login p-4" style="min-width: 400px;">
-    <h3 class="mb-3">Update Event</h3>
+<div class="container w-50 container-shadow bg-white p-4" style="min-width: 400px;">
+    <h3 class="mb-3">Delete Event</h3>
     <form method="post">
         <div class="row mb-4 g-3">
             <div class="col-12">
@@ -13,11 +13,11 @@
                 <input type="text" class="form-control" asp-for="VoteEventId" readonly>
             </div>
             <div class="col-md-6">
-                <label class="form-label">Start Date Time<span class="text-danger">*</span></label>
+                <label class="form-label">Start Date Time</label>
                 <input type="datetime-local" class="form-control" asp-for="StartDateTime" readonly>
             </div>
             <div class="col-md-6">
-                <label class="form-label">End Date Time<span class="text-danger">*</span></label>
+                <label class="form-label">End Date Time</label>
                 <input type="datetime-local" class="form-control" asp-for="EndDateTime" readonly>
             </div>
         </div>

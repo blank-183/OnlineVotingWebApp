@@ -11,17 +11,20 @@ using Microsoft.AspNetCore.Routing.Matching;
 using Microsoft.CodeAnalysis.Options;
 using OnlineVotingWebApp.ViewModels;
 using System.Linq;
+using Microsoft.AspNetCore.Identity;
 
 namespace OnlineVotingWebApp.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly OnlineVotingDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger, OnlineVotingDbContext context)
+        public HomeController(ILogger<HomeController> logger, UserManager<ApplicationUser> userManager, OnlineVotingDbContext context)
         {
             _logger = logger;
+            this._userManager = userManager;
             this._context = context;
         }
 
@@ -76,9 +79,9 @@ namespace OnlineVotingWebApp.Controllers
         //}
 
         [HttpGet]
-        public IActionResult VoteResults()
+        public async Task<IActionResult> VoteResults()
         {
-            VoteEvent? voteEvent = this._context.VoteEvents.FirstOrDefault();
+            VoteEvent? voteEvent = await this._context.VoteEvents.FirstOrDefaultAsync();
 
             if (voteEvent == null)
             {
@@ -87,12 +90,12 @@ namespace OnlineVotingWebApp.Controllers
             }
 
             // Get all positions
-            var candidatePositions = this._context.CandidatePositions.ToList();
+            var candidatePositions = await this._context.CandidatePositions.ToListAsync();
 
             // Get all candidates
             var candidates = this._context.Candidates.ToList();
 
-            var transactionsAnon = from transaction in this._context.Transactions
+            var transactions = from transaction in this._context.Transactions
                                    join candidate in this._context.Candidates on transaction.CandidateId
                                    equals candidate.CandidateId
                                    select new
@@ -105,25 +108,26 @@ namespace OnlineVotingWebApp.Controllers
 
             // Get total number of votes in each position
             Dictionary<int, int> positionVoteCount = new Dictionary<int, int>();
-
-            foreach (var (pos, totalVotes) in from pos in candidatePositions
-                                              let totalVotes = transactionsAnon.Count(x => x.CandidatePositionId == pos.CandidatePositionId)
-                                              select (pos, totalVotes))
+            foreach (var pos in candidatePositions)
             {
+                int totalVotes = transactions.Count(x => x.CandidatePositionId == pos.CandidatePositionId);
                 positionVoteCount.Add(pos.CandidatePositionId, totalVotes);
             }
 
             // Get total number of votes for each candidate
             Dictionary<int, int> candidateVoteCount = new Dictionary<int, int>();
-            foreach (var (candidate, voteCount) in from candidate in candidates
-                                                   let voteCount = transactionsAnon.Count(c => c.CandidateId == candidate.CandidateId)
-                                                   select (candidate, voteCount))
+            foreach (var candidate in candidates)
             {
+                int voteCount = transactions.Count(c => c.CandidateId == candidate.CandidateId);
                 candidateVoteCount.Add(candidate.CandidateId, voteCount);
             }
 
             // Get total number of registered voters who voted
-            var votes = this._context.Votes.ToList().Count();
+            var votes = this._context.Votes.ToList().Count;
+
+            // Get total number of registered voters
+            var voters = await this._userManager.GetUsersInRoleAsync("Voter");
+            int totalVoters = voters.Count();
 
             VoteResultViewModel result = new VoteResultViewModel()
             {
@@ -131,23 +135,33 @@ namespace OnlineVotingWebApp.Controllers
                 Candidates = candidates,
                 PositionVoteCount = positionVoteCount,
                 CandidateVoteCount = candidateVoteCount,
-                TotalVotes = votes
+                TotalVotes = votes,
+                TotalVoters = totalVoters
             };
 
-            //List<CandidateResultViewModel> candidatesConv = new List<CandidateResultViewModel>();
+            ViewBag.StartDateTime = voteEvent.StartDateTime;
+            ViewBag.EndDateTime = voteEvent?.EndDateTime;
 
-            //foreach (var candidate in candidatesAnon)
-            //{
-            //    CandidateResultViewModel viewCandidatesViewModel = new CandidateResultViewModel()
-            //    {
-            //        TransactionId = candidate.TransactionId,
-            //        VoteId = candidate.VoteId,
-            //        CandidateId = candidate.CandidateId,
-            //        CandidatePositionId = candidate.CandidatePositionId,
-            //    };
-            //    candidatesConv.Add(viewCandidatesViewModel);
-            //}
             return View(result);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ViewCandidates()
+        {
+            VoteEvent? voteEvent = this._context.VoteEvents.FirstOrDefault();
+
+            if (voteEvent == null)
+            {
+                TempData["ErrorMessage"] = "No event has been scheduled";
+                return RedirectToAction("Index", "Home");
+            }
+
+            List<CandidatePosition> candidatePositions = await this._context.CandidatePositions.ToListAsync();
+            ViewBag.CandidatePositions = candidatePositions;
+
+            List<Candidate> candidates = await this._context.Candidates.ToListAsync();
+
+            return View(candidates);
         }
 
         public IActionResult Privacy()

@@ -9,5 +9,6 @@ namespace OnlineVotingWebApp.VoterViewModels
         public Dictionary<int, int> PositionVoteCount { get; set; }
         public Dictionary<int, int> CandidateVoteCount { get; set; }
         public int TotalVotes { get; set; }
+        public int TotalVoters { get; set; }
     }
 }

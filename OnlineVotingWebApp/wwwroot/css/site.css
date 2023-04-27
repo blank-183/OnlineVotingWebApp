@@ -11,7 +11,7 @@ html {
 body::before {
     display: block;
     content: '';
-    height: 90px;
+    height: 85px;
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
@@ -46,7 +46,7 @@ body {
     background-image: url('/img/flag1.jpg');
     background-size: cover;
     background-repeat: no-repeat;
-    height: 250px;
+    height: 180px;
     display: flex; /* Use Flexbox */
     justify-content: center; /* Center the content horizontally */
     align-items: center;

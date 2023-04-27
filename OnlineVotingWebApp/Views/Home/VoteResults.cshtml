@@ -2,18 +2,93 @@
 @{
     ViewData["Title"] = "Election Result";
 }
-
-@foreach (var pos in Model.CandidatePositions)
-{
-    <h2>@pos.CandidatePositionName</h2>
-    @foreach (var candidate in Model.Candidates.Where(d => d.CandidatePositionId == pos.CandidatePositionId))
+<div class="background-div p-4 text-center align-items-center justify-content-center">
+    <h1 class="text-center text-white m-2"><strong>HALALAN @DateTime.Now.Year PHILIPPINE ELECTION RESULTS</strong></h1>
+</div>
+<div class="container bg-white p-5">
+    <div class="h3 text-center p-3 mb-3" id="countdown" style="border: 2px solid lightgray"></div>
+    @foreach (var pos in Model.CandidatePositions)
     {
-        <p>Candidate name: @candidate.FullName</p>
-        <p>Votes: @Model.CandidateVoteCount[candidate.CandidateId]</p>
-        <p>Percentage: @(((double)Model.CandidateVoteCount[candidate.CandidateId] / Model.TotalVotes) * 100)</p>
+        <div class="bg-dark p-1 text-center">
+            <h3 class="text-white mt-2"><strong>@pos.CandidatePositionName.ToUpper()</strong></h3>
+        </div>
+        <hr />
+        <div class="row g-3 my-4">
+            @foreach (var candidate in Model.Candidates.Where(d => d.CandidatePositionId == pos.CandidatePositionId))
+            {
+                <div class="col-md-6 col-lg-4 px-3 my-3">
+                    <div class="card py-3 card-shadow" style="border-radius: 0;">
+                        <div class="card-body text-center">
+                            <img src="~/img/candidate/@candidate.Photo" class="rounded-circle mb-3" alt="" style="width:200px; height:200px; object-fit:cover; border: 5px solid lightgray">
+                            <div class="bg-white border">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-info text-white"><strong>@candidate.FullName.ToUpper()</strong></li>
+                                    <li class="list-group-item">Party: @candidate.Party</li>
+                                    <li class="list-group-item">Votes: @Model.CandidateVoteCount[candidate.CandidateId]</li>
+                                    <li class="list-group-item">Percentage: @((((double)Model.CandidateVoteCount[candidate.CandidateId] / Model.TotalVotes) * 100).ToString("0.00"))%</li>
+
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            <div class="col-md-6 col-lg-4 px-3 my-3">
+                <div class="card py-3 card-shadow" style="border-radius: 0;">
+                    <div class="card-body text-center">
+                        <img src="~/img/default.png" class="rounded-circle mb-3" alt="" style="width:200px; height:200px; object-fit:cover; border: 5px solid lightgray">
+                        <div class="bg-white border">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item bg-danger text-white"><strong>ABSTAIN</strong></li>
+                                <li class="list-group-item">Count: @(Model.TotalVotes - Model.PositionVoteCount[pos.CandidatePositionId])</li>
+                                <li class="list-group-item">Percentage: @(((((double)Model.TotalVotes - Model.PositionVoteCount[pos.CandidatePositionId]) / Model.TotalVotes) * 100).ToString("0.00"))%</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     }
-    <p>TOTAL VOTES IN POSITION: @Model.PositionVoteCount[pos.CandidatePositionId]</p>
-    <p>ABSTAIN: @(Model.TotalVotes - Model.PositionVoteCount[pos.CandidatePositionId])</p>
-    <p>ABSTAIN PERCENTAGE: @((((double)Model.TotalVotes - Model.PositionVoteCount[pos.CandidatePositionId]) / Model.TotalVotes) * 100)</p>
+    <h2 class="text-center bg-warning p-2 text-white">NUMBER OF REGISTERED VOTERS: @Model.TotalVoters</h2>
+    <h2 class="text-center bg-warning p-2 text-white">NUMBER OF REGISTERED VOTERS WHO VOTED: @Model.TotalVotes</h2>
+</div>
+
+@section scripts {
+    <script>
+        // Function to update the countdown timer
+        function updateCountdown() {
+            // Get the start and end date times from the ViewBag
+            var startDate = new Date("@ViewBag.StartDateTime");
+            var endDate = new Date("@ViewBag.EndDateTime");
+
+            // Get the current date and time
+            var now = new Date();
+
+            // Calculate the time remaining until the end of the election
+            var timeRemaining = endDate - now;
+
+            // If the current time is before the start of the election, show a message
+            if (now < startDate) {
+                document.getElementById("countdown").innerHTML = "THE ELECTION HASN'T STARTED YET";
+            }
+            // If the current time is after the end of the election, show a message
+            else if (now > endDate) {
+                document.getElementById("countdown").innerHTML = "THE ELECTION HAS ENDED";
+            }
+            // Otherwise, show the countdown timer
+            else {
+                // Calculate the days, hours, minutes, and seconds remaining
+                var daysRemaining = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+                var hoursRemaining = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var minutesRemaining = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+                var secondsRemaining = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+                // Display the countdown timer
+                document.getElementById("countdown").innerHTML = "TIME REMANING: " + daysRemaining + " DAYS, " + hoursRemaining + " HOURS, " + minutesRemaining + " MINUTES, " + secondsRemaining + " SECONDS";
+            }
+        }
+
+        // Update the countdown timer every second
+        setInterval(updateCountdown, 1000);
+    </script>
 }
-<p>NUMBER OF VOTERS WHO VOTED: @Model.TotalVotes</p>

@@ -12,11 +12,24 @@
                 <label class="form-label">Vote Event ID</label>
                 <input type="text" class="form-control" asp-for="VoteEventId" readonly>
             </div>
-            <div class="col-md-6">
-                <label class="form-label">Start Date Time<span class="text-danger">*</span></label>
-                <input type="datetime-local" class="form-control" asp-for="StartDateTime">
-                <span asp-validation-for="StartDateTime" class="text-danger"></span>
-            </div>
+            @{
+                if (DateTime.Now > Model.StartDateTime)
+                {
+                    <div class="col-md-6">
+                        <label class="form-label">Start Date Time<span class="text-danger">*</span></label>
+                        <input type="datetime-local" class="form-control" asp-for="StartDateTime" readonly>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-md-6">
+                        <label class="form-label">Start Date Time<span class="text-danger">*</span></label>
+                        <input type="datetime-local" class="form-control" asp-for="StartDateTime">
+                        <span asp-validation-for="StartDateTime" class="text-danger"></span>
+                    </div>
+                }
+            }
+            
             <div class="col-md-6">
                 <label class="form-label">End Date Time<span class="text-danger">*</span></label>
                 <input type="datetime-local" class="form-control" asp-for="EndDateTime">
