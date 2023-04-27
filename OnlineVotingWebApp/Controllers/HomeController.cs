@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using OnlineVotingWebApp.Data;
 using OnlineVotingWebApp.Models;
-using OnlineVotingWebApp.VoterViewModels;
 using System.Diagnostics;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -12,6 +11,7 @@ using Microsoft.CodeAnalysis.Options;
 using OnlineVotingWebApp.ViewModels;
 using System.Linq;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace OnlineVotingWebApp.Controllers
 {
@@ -32,51 +32,6 @@ namespace OnlineVotingWebApp.Controllers
         {
             return View();
         }
-
-        //[HttpGet]
-        //public IActionResult VoteResults()
-        //{
-        //    var voteResults = _context.Candidates
-        //        .Include(c => c.CandidatePosition)
-        //        .GroupJoin(
-        //            _context.Transactions,
-        //            c => c.CandidateId,
-        //            t => t.CandidateId,
-        //            (c, t) => new { Candidate = c, Transactions = t })
-        //        .Select(g => new VoteResultViewModel
-        //        {
-        //            Candidate = g.Candidate,
-        //            TotalVotes = g.Transactions.Count(),
-        //            Percentage = 0 // Placeholder for percentage calculation
-        //        })
-        //        .ToList();
-
-        //    // Calculate total votes for each candidate's position
-        //    var positionIds = voteResults.Select(v => v.Candidate.CandidatePositionId).Distinct().ToList();
-        //    var positionTotalVotes = new Dictionary<int?, int>(); // Dictionary to store positionId and total votes
-        //    foreach (var positionId in positionIds)
-        //    {
-        //        var total = _context.Transactions.Count(t => t.Candidate.CandidatePositionId == positionId);
-        //        positionTotalVotes.Add(positionId, total);
-        //    }
-
-        //    // Calculate abstained votes and percentage for each candidate
-        //    var totalVotes = _context.Transactions.Count();
-        //    foreach (var voteResult in voteResults)
-        //    {
-        //        var positionId = voteResult.Candidate.CandidatePositionId;
-        //        var positionTotalVoteCount = positionTotalVotes[positionId];
-        //        var abstainedVotes = positionTotalVoteCount - voteResult.TotalVotes;
-        //        voteResult.AbstainedVotes = abstainedVotes;
-
-        //        if (totalVotes > 0)
-        //        {
-        //            voteResult.Percentage = (voteResult.TotalVotes * 100.0) / totalVotes;
-        //        }
-        //    }
-
-        //    return Json(voteResults);
-        //}
 
         [HttpGet]
         public async Task<IActionResult> VoteResults()
@@ -162,6 +117,21 @@ namespace OnlineVotingWebApp.Controllers
             List<Candidate> candidates = await this._context.Candidates.ToListAsync();
 
             return View(candidates);
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> ViewProfile()
+        {
+            var userId = this._userManager.GetUserId(User);
+            var user = this._context.ApplicationUsers.Include("Address").FirstOrDefault(e => e.Id == userId);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return View(user);
         }
 
         public IActionResult Privacy()

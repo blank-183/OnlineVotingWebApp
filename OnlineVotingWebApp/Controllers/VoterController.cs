@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using OnlineVotingWebApp.CustomAttributes;
 using OnlineVotingWebApp.Data;
 using OnlineVotingWebApp.Models;
-using OnlineVotingWebApp.VoterViewModels;
 
 namespace OnlineVotingWebApp.Controllers
 {
@@ -40,7 +39,6 @@ namespace OnlineVotingWebApp.Controllers
             {
                 TempData["ErrorMessage"] = "Voting is not yet allowed. Please wait for the election event to start.";
                 
-                //TODO: Palitan ang page
                 return RedirectToAction("Index", "Home");
             }
 
@@ -72,6 +70,12 @@ namespace OnlineVotingWebApp.Controllers
         public async Task<IActionResult> CastVote(List<int> candidateIds)
         {
             VoteEvent? voteEvent = this._context.VoteEvents.FirstOrDefault();
+
+            if (voteEvent == null)
+            {
+                TempData["ErrorMessage"] = "No event has been scheduled.";
+                return RedirectToAction("Index", "Home");
+            }
 
             if (DateTime.Now > voteEvent.EndDateTime)
             {
@@ -114,7 +118,6 @@ namespace OnlineVotingWebApp.Controllers
             TempData["SuccessMessage"] = "Your votes have been recorded. Thank you!";
             AddToActivityLogs("Vote cast");
             
-            //TODO: Palitan ang page
             return RedirectToAction("Index", "Home");
         }
 

@@ -1,0 +1,87 @@
+﻿@model ApplicationUser
+@{
+    ViewData["Title"] = "View Profile";
+}
+
+<section>
+    <div class="container w-75 container-shadow bg-white p-5">
+        
+        <div class="d-flex mb-3 align-items-center justify-content-center">
+            @if (Model.Photo == null)
+            {
+                <img src="~/img/default.png" class="image-thumbnail" style="width: 200px; height:200px; object-fit: cover; border-radius: 50%; border: 2px solid  black;">
+
+            }
+            else
+            {
+                <img src="~/img/user/@Model.Photo" class="image-thumbnail" style="width: 200px; height:200px; object-fit: cover; border-radius: 50%; border: 2px solid  black;">
+            }
+        </div>
+        <div class="d-flex mb-5 align-items-center justify-content-center">
+            <p class="h2 flex-column">@Model.FullName.ToUpper()</p>
+        </div>
+        <form method="post" enctype="multipart/form-data">
+            <h5>Personal Information</h5>
+            <div class="row mb-4 g-3">
+                <div class="col-lg-4 col-md-6">
+                    <label class="form-label">First Name</label>
+                    <input type="text" class="form-control" asp-for="FirstName" readonly>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <label class="form-label">Middle Name</label>
+                    <input type="text" class="form-control" asp-for="MiddleName" readonly>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <label class="form-label">Last Name</label>
+                    <input type="text" class="form-control" asp-for="LastName" readonly>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" asp-for="Email" readonly>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <label class="form-label">Sex</label> <br />
+                    <input type="text" class="form-control" asp-for="Sex" readonly />
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <label class="form-label">Civil Status</label>
+                    <input type="text" class="form-control" asp-for="CivilStatus" readonly />
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <label class="form-label">Date of Birth</label>
+                    <input type="date" class="form-control" asp-for="DateOfBirth" readonly>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <label class="form-label">Phone Number</label>
+                    <input type="text" class="form-control" asp-for="PhoneNumber" readonly>
+                </div>
+            </div>
+
+            <h5>Permanent Address</h5>
+            <div class="row mb-4 g-3">
+                <div class="col-lg-4 col-md-6">
+                    <label class="form-label">Region</label>
+                    <input type="text" class="form-control" asp-for="Address.Region" readonly/>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <label class="form-label">Province</label>
+                    <input type="text" class="form-control" asp-for="Address.Province" readonly>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <label class="form-label">Municipality</label>
+                    <input type="text" class="form-control" asp-for="Address.Municipality" readonly>
+                </div>
+                <div class="col-lg-6 col-md-8">
+                    <label class="form-label">Address Line</label>
+                    <input type="text" class="form-control" asp-for="Address.AddressLine" readonly>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

@@ -1,6 +1,6 @@
 ﻿using OnlineVotingWebApp.Models;
 
-namespace OnlineVotingWebApp.VoterViewModels
+namespace OnlineVotingWebApp.ViewModels
 {
 
     public class VotingFormViewModel

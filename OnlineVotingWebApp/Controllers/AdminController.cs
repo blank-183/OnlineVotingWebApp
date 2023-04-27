@@ -55,7 +55,7 @@ namespace OnlineVotingWebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                CandidatePosition candidatePosition = new CandidatePosition()
+                CandidatePosition candidatePosition = new()
                 {
                     CandidatePositionName = model.CandidatePositionName,
                 };
@@ -198,11 +198,11 @@ namespace OnlineVotingWebApp.Controllers
                                          Photo = candidate.Photo
                                      };
 
-                List<ViewCandidatesViewModel> candidates = new List<ViewCandidatesViewModel>();
+                List<ViewCandidatesViewModel> candidates = new();
 
                 foreach (var candidate in candidatesAnon)
                 {
-                    ViewCandidatesViewModel viewCandidatesViewModel = new ViewCandidatesViewModel()
+                    ViewCandidatesViewModel viewCandidatesViewModel = new()
                     {
                         CandidateId = candidate.CandidateId,
                         FullName = candidate.FullName,
@@ -490,7 +490,7 @@ namespace OnlineVotingWebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                VoteEvent voteEvent = new VoteEvent()
+                VoteEvent voteEvent = new()
                 {
                     StartDateTime = model.StartDateTime,
                     EndDateTime = model.EndDateTime
@@ -661,6 +661,12 @@ namespace OnlineVotingWebApp.Controllers
         {
             VoteEvent? voteEvent = this._context.VoteEvents.FirstOrDefault();
 
+            if (voteEvent == null)
+            {
+                TempData["ErrorMessage"] = "No event has been scheduled.";
+                return RedirectToAction("Index", "Home");
+            }
+
             int resultStart = DateTime.Compare(DateTime.Now, voteEvent.StartDateTime);
             int resultEnd = DateTime.Compare(DateTime.Now, voteEvent.EndDateTime);
 
@@ -781,7 +787,7 @@ namespace OnlineVotingWebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                IdentityRole identityRole = new IdentityRole
+                IdentityRole identityRole = new()
                 {
                     Name = model.RoleName
                 };
@@ -881,7 +887,7 @@ namespace OnlineVotingWebApp.Controllers
             {
                 var fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img/candidate");
 
-                System.IO.DirectoryInfo di = new DirectoryInfo(fullPath);
+                System.IO.DirectoryInfo di = new(fullPath);
 
                 foreach (FileInfo file in di.GetFiles())
                 {
